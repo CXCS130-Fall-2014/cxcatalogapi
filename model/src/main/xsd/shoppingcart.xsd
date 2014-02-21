@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0"
+           targetNamespace="http://www.shopzilla.com/services/shoppingcart"
+           elementFormDefault="qualified" attributeFormDefault="qualified"
+           xmlns:tns="http://www.shopzilla.com/services/shoppingcart"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="ShoppingCartResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:ShoppingCartEntry" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ShoppingCartEntry">
+    <xs:complexType>
+      <xs:attributeGroup ref="tns:coreAttributes"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:attributeGroup name="coreAttributes">
+    <xs:attribute name="shopperId" type="xs:long"/>
+    <xs:attribute name="productId" type="xs:long"/>
+    <xs:attribute name="productName" type="xs:string"/>
+    <xs:attribute name="productCost" type="xs:long"/>
+  </xs:attributeGroup>
+
+</xs:schema>

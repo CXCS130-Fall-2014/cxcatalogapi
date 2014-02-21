@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+  <mapping>
+    <class-a>com.shopzilla.service.shoppingcart.data.ShoppingCartEntry</class-a>
+    <class-b>com.shopzilla.site.service.shoppingcart.model.jaxb.ShoppingCartEntry</class-b>
+    <field>
+      <a>shopperId</a>
+      <b>shopperId</b>
+    </field>
+    <field>
+      <a>productId</a>
+      <b>productId</b>
+    </field>
+    <field>
+      <a>productName</a>
+      <b>productName</b>
+    </field>
+    <field>
+      <a>productCost</a>
+      <b>productCost</b>
+    </field>
+  </mapping>
+
+</mappings>
