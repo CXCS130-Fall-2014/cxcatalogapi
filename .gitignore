@@ -1,3 +1,8 @@
 *.db
-.idea
 service/logs/
+*.iml
+target
+.idea
+.classpath
+.project
+.settings
