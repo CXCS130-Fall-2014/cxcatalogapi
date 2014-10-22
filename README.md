@@ -1,4 +1,4 @@
-#Quickstarte
+#Quick Start
 
 <pre>
     mvn clean install
