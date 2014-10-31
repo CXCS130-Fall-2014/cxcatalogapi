@@ -19,7 +19,7 @@
 
 <!-- The following text comes from mustache -->
 <div id="helloWorld">
-    This message comes from the backend through mustache: <span>{{helloWorldMsg}}</span>
+    This message comes from the backend through xxxxxx: <span>{{helloWorldMsg}}</span>
     <ul>
     {{#worlds}}
         <li>{{.}}</li>
@@ -36,9 +36,8 @@
             <form name="get_cart">
 
                 <label for="shopperId">Shopper Id</label>
-                <input id="shopperId" name="shopperId" value="12345">
                 <br><br>
-                <input type="submit" name="fetch" value="Fetch">
+                <input type="submit" name="show_api_call" value="show api call">
             </form>
         </div>
     </div>
@@ -52,12 +51,13 @@ jQuery(document).ready(function() {
     $("form[name='get_cart']").submit(function(e) {
         e.preventDefault();
 
-        var shopperId = $("input[name='shopperId']", $(this)).val();
+        var shopperId = 0;
 
         var get_url = "/services/shoppingcart/v1/shoppingcart/shopperId/" + shopperId + "?format=json";
-        $("#get_service_call a").attr('href', get_url).text(get_url).parent().show();
+        var test_url = "/services/shoppingcart/v1/shoppingcart/apicall/shopperId/" + shopperId  + "?format=json";
+        $("#get_service_call a").attr('href', test_url).text(test_url).parent().show();
         $.ajax({
-            url: get_url,
+            url: test_url,
             success:function(r) {
                 $("#get_results").html("<pre>" + JSON.stringify(r,null, 4) + "</pre>");
             }

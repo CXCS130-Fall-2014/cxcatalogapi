@@ -34,7 +34,7 @@ public class IndexResource {
         worlds.add("Mars");
         worlds.add("Not Pluto");
         view.setWorlds(worlds);
-        
+
         return view;
     }
 

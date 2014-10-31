@@ -15,17 +15,21 @@ import org.apache.commons.collections.CollectionUtils;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.json.*;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-
+import java.net.*;
+import java.io.*;
+import java.util.Vector;
 /**
  * Controller for handling CRUD operations for a shopping cart.
  * @author Chris McAndrews
  */
+
 @Path("/shoppingcart")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON})
 public class ShoppingCartResource {
@@ -44,23 +48,36 @@ public class ShoppingCartResource {
     @GET
     @JSONP
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("shopperId/{shopperId}")
+    @Path("apicall/shopperId/{shopperId}")
     public Response get(@PathParam("shopperId") Long shopperId,
-                        @QueryParam("format") Format format) {
+                        @QueryParam("format") Format format) throws Exception {
 
         if (shopperId == null) {
             LOG.debug("A valid shopper id must be provided");
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
 
-        ShoppingCartResponse response = new ShoppingCartResponse();
-        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
-        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
-                dao.getShoppingCartEntries(query);
-        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
-            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
-        }
-        return buildResponse(response, format);
+//        ShoppingCartResponse response = new ShoppingCartResponse();
+//        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
+//        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
+//                dao.getShoppingCartEntries(query);
+//        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
+//            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
+//        }
+        String response = "";
+        URL apicall = new URL("http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=shoes&results=20&resultsOffers=10&format=json");
+        URLConnection ac = apicall.openConnection();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                        ac.getInputStream()));
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null)
+            response+=inputLine;
+        in.close();
+        Vector<Item> items = parseItems(response);
+        System.out.println(items);
+        return buildVectorResponse(items, format);
     }
 
     @Timed(name = "createShoppingCart")
@@ -155,5 +172,38 @@ public class ShoppingCartResource {
         return Response.ok(response)
                 .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
                 .build();
+    }
+    private Response buildVectorResponse(Vector<Item> response, Format format) {
+        return Response.ok(response)
+                .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
+                .build();
+    }
+
+    private Vector<Item> parseItems(String response) {
+        JSONObject obj = new JSONObject(response);
+        JSONArray products = obj.getJSONObject("products").getJSONArray("product");
+
+        Vector<Item> items = new Vector<Item>();
+        for (int i = 0; i < products.length(); i++)
+        {
+            Item new_item = new Item();
+            Vector<String> image_url = new Vector<String>();
+            JSONObject cur_product = products.getJSONObject(i);
+            JSONArray images = cur_product.getJSONObject("images").getJSONArray("image");
+            for (int j = 0; j < images.length(); j++) {
+                image_url.add(images.getJSONObject(j).get("value").toString());
+            }
+            String title = cur_product.get("title").toString();
+            String description = cur_product.get("description").toString();
+            String url = cur_product.getJSONObject("url").get("value").toString();
+
+            new_item.setImage_url(image_url);
+            new_item.setDescription(description);
+            new_item.setRedirect_url(url);
+            // todo add offers
+            // todo add price range and price
+            items.add(new_item);
+        }
+        return items;
     }
 }
