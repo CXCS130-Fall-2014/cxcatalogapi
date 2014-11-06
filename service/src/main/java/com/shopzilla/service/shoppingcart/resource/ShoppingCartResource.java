@@ -25,6 +25,9 @@ import java.util.List;
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
+
+
+
 /**
  * Controller for handling CRUD operations for a shopping cart.
  * @author Chris McAndrews
@@ -64,7 +67,18 @@ public class ShoppingCartResource {
 //        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
 //            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
 //        }
-        String response = "";
+
+        Vector<String> new_tags = new Vector<String>();
+        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
+        int size = new_tags.size();
+        System.out.println(size);
+        for(int i = 0; i < size; i++){
+            String new_keywords = new_tags.get(i).toString();
+            new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
+        }
+        System.out.println(new_tags);
+
+        String catalog_response = "";
         URL apicall = new URL("http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=shoes&results=20&resultsOffers=10&format=json");
         URLConnection ac = apicall.openConnection();
         BufferedReader in = new BufferedReader(
@@ -73,9 +87,9 @@ public class ShoppingCartResource {
         String inputLine;
 
         while ((inputLine = in.readLine()) != null)
-            response+=inputLine;
+            catalog_response+=inputLine;
         in.close();
-        Vector<Item> items = parseItems(response);
+        Vector<Item> items = parseItems(catalog_response);
         System.out.println(items);
         return buildVectorResponse(items, format);
     }
@@ -206,4 +220,12 @@ public class ShoppingCartResource {
         }
         return items;
     }
+    //interact with tumblr api
+    private Vector<String> getTags(String keyword, String api_key, Vector<String> old_tags) throws Exception{
+        TumblrTags ttags = new TumblrTags();
+        old_tags  = ttags.tumblrcalls(keyword, api_key, old_tags);
+        return old_tags;
+    }
+
+    
 }
