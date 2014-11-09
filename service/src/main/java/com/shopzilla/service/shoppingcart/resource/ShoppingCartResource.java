@@ -25,7 +25,7 @@ import java.util.List;
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
-
+import java.io.File;
 
 
 /**
@@ -47,28 +47,49 @@ public class ShoppingCartResource {
         this.mapper = mapper;
     }
 
+  /*  @Timed(name = "scrollAndAppend")
+    @POST
+    @JSONP
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("/append")
+
+    public Response append(
+                        @QueryParam("load") int load,
+                       @QueryParam("format") Format format) {
+        
+        File folder = new File("src/main/resources/assets/static/img");
+        File curdir = new File(new File(".").getAbsolutePath());
+        File[] listOfFiles = folder.listFiles();
+
+        Vector<Item> items = new Vector<Item>();
+        Item new_item = new Item();
+        Vector<String> image_url = new Vector<String>();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+                String filePath = "style=background:url(/assets/static/img/" + listOfFiles[i].getName() + ");";
+                image_url.add(filePath);
+        }
+        new_item.setImage_url(image_url);
+        items.add(new_item);
+        System.out.println("callllllllllled");
+        return buildVectorResponse(items, format);
+    }*/
+
     @Timed(name = "getShoppingCart")
     @GET
     @JSONP
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("apicall/shopperId/{shopperId}")
     public Response get(@PathParam("shopperId") Long shopperId,
-                        @QueryParam("format") Format format) throws Exception {
+                        @QueryParam("format") Format format,
+                        @QueryParam("load") Integer load) throws Exception {
 
         if (shopperId == null) {
             LOG.debug("A valid shopper id must be provided");
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
 
-//        ShoppingCartResponse response = new ShoppingCartResponse();
-//        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
-//        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
-//                dao.getShoppingCartEntries(query);
-//        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
-//            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
-//        }
-
-        Vector<String> new_tags = new Vector<String>();
+   /*     Vector<String> new_tags = new Vector<String>();
         new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
         int size = new_tags.size();
         System.out.println(size);
@@ -91,6 +112,29 @@ public class ShoppingCartResource {
         in.close();
         Vector<Item> items = parseItems(catalog_response);
         System.out.println(items);
+        return buildVectorResponse(items, format);*/
+        File folder = new File("src/main/resources/assets/static/img");
+        File curdir = new File(new File(".").getAbsolutePath());
+        File[] listOfFiles = folder.listFiles();
+
+        Vector<Item> items = new Vector<Item>();
+        Item new_item = new Item();
+        Vector<String> image_url = new Vector<String>();
+
+        if ((load+1)*10 < listOfFiles.length) {
+            for (int i = load*10; i < load*10+10; i++) {
+                    String filePath = "style=background:url(/assets/static/img/" + listOfFiles[i].getName() + ");";
+                    image_url.add(filePath);
+            }
+        } else if (load*10 < listOfFiles.length) {
+            for (int i = load*10; i < listOfFiles.length; i++) {
+                    String filePath = "style=background:url(/assets/static/img/" + listOfFiles[i].getName() + ");";
+                    image_url.add(filePath);
+            }
+        } 
+        new_item.setImage_url(image_url);
+        items.add(new_item);
+
         return buildVectorResponse(items, format);
     }
 
@@ -188,6 +232,11 @@ public class ShoppingCartResource {
                 .build();
     }
     private Response buildVectorResponse(Vector<Item> response, Format format) {
+        return Response.ok(response)
+                .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
+                .build();
+    }
+    private Response buildImgResponse(Vector<String> response, Format format) {
         return Response.ok(response)
                 .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
                 .build();
