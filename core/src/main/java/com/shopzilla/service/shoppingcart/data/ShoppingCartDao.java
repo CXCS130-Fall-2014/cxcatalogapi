@@ -1,11 +1,13 @@
 package com.shopzilla.service.shoppingcart.data;
 
 import com.shopzilla.service.shoppingcart.ShoppingCartQuery;
+import com.shopzilla.service.shoppingcart.TumblrTagQuery;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
+
 
 import java.util.List;
 
@@ -41,4 +43,5 @@ public interface ShoppingCartDao extends Transactional<ShoppingCartDao> {
             "DELETE from shopping_cart_entry WHERE shopper_id = :q.shopperId "
     )
     public int deleteShoppingCartEntry(@BindBean("q") ShoppingCartQuery query);
+
 }

@@ -27,7 +27,6 @@ import java.io.*;
 import java.util.Vector;
 
 
-
 /**
  * Controller for handling CRUD operations for a shopping cart.
  * @author Chris McAndrews
@@ -45,6 +44,50 @@ public class ShoppingCartResource {
     public ShoppingCartResource(ShoppingCartDao dao, Mapper mapper) {
         this.dao = dao;
         this.mapper = mapper;
+    }
+/*
+    @Timed(name = "getTumblrTags")
+    @GET
+    @JSONP
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("numTags/{numTags}")
+    public Response getTags(@PathParam("numTags") Integer numTags,
+                           @QueryParam("format") Format format) {
+        if (numTags < 1) {
+            LOG.debug("Need to provide a number of tags to request");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+        TumblrTagResponse response = new ShoppingCartResponse();
+        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
+        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
+                dao.getShoppingCartEntries(query);
+        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
+            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
+        }
+        return buildResponse(response, format);
+    }
+*/
+    @Timed(name = "getShoppingCartOld")
+    @GET
+    @JSONP
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("shopperId/{shopperId}")
+    public Response getOld(@PathParam("shopperId") Long shopperId,
+                        @QueryParam("format") Format format) {
+        if (shopperId == null) {
+            LOG.debug("A valid shopper id must be provided");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+        ShoppingCartResponse response = new ShoppingCartResponse();
+        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
+        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
+                dao.getShoppingCartEntries(query);
+        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
+            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
+        }
+        return buildResponse(response, format);
     }
 
     @Timed(name = "getShoppingCart")

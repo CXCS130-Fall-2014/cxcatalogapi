@@ -26,4 +26,26 @@
     <xs:attribute name="productCost" type="xs:long"/>
   </xs:attributeGroup>
 
+
+    <!-- TUMBLR TAGS -->
+<xs:element name="TumblrTagResponse">
+    <xs:complexType>
+        <xs:sequence>
+            <xs:element ref="tns:TumblrTagEntry" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:element>
+
+<xs:element name="TumblrTagEntry">
+    <xs:complexType>
+        <xs:attributeGroup ref="tns:tagAttributes"/>
+    </xs:complexType>
+</xs:element>
+
+<xs:attributeGroup name="tagAttributes">
+    <xs:attribute name="tumblrTag" type="xs:string"/>
+    <xs:attribute name="tagDate" type="xs:string"/>
+</xs:attributeGroup>
+
+
 </xs:schema>

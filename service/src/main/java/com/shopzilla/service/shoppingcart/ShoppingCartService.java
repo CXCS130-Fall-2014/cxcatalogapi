@@ -20,6 +20,8 @@ import org.dozer.Mapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
+//import com.shopzilla.service.shoppingcart.data.TumblrTagDao;
+
 /**
  * Main entry point for shopping cart service.
  */
@@ -50,11 +52,18 @@ public class ShoppingCartService extends Service<ShoppingCartServiceConfiguratio
         Handle handle = jdbi.open();
         handle.execute("create table if not exists shopping_cart_entry (shopper_id integer not null,product_id integer not null,product_name varchar(255) not null,product_cost integer not null,primary key (shopper_id, product_id))");
 
+    //TODO set up database for Tumblr Tags and Catalog Data
+ //       handle.execute("create table if not exists tumblr_tags_entry (tumblr_tag varchar(255) not null, tag_date varchar(255) not null)");   //TODO Should tag_date be datetime object?
+
+
+
         /*
          * "real" database DAO
          */
         final ShoppingCartDao shoppingCartDao = jdbi.onDemand(ShoppingCartDao.class);
 
+        //ADDED MY TUMBLR SCHTUFF HERE
+      //  final TumblrTagDao tumblrTagDao = jdbi.onDemand(TumblrTagDao.class);
         /*
         * health checks
          */
@@ -69,9 +78,14 @@ public class ShoppingCartService extends Service<ShoppingCartServiceConfiguratio
         * endpoints
          */
         environment.addResource(new ShoppingCartResource(shoppingCartDao, mapper));
+        //MY SCHTUFF HERE TOO!!!
+        //environment.addResource(new ShoppingCartResource(tumblrTagDao, mapper));
+        //
         environment.addResource(new ConfigurationResource(configuration));
         environment.addResource(new IndexResource());
         environment.addResource(new VersionResource());
+
+
     }
 
 }
