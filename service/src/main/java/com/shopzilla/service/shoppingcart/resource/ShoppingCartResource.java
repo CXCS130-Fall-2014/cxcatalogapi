@@ -25,6 +25,7 @@ import java.util.List;
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
+import java.lang.Object;
 
 
 
@@ -69,12 +70,12 @@ public class ShoppingCartResource {
 //        }
 
         Vector<String> new_tags = new Vector<String>();
-        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
+        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
         int size = new_tags.size();
-        for(int i = 0; i < size; i++){
-            String new_keywords = new_tags.get(i).toString();
-            new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
-        }
+//        for(int i = 0; i < size; i++){
+//            String new_keywords = new_tags.get(i).toString();
+//            new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 1);
+//        }
         // System.out.println(new_tags);
         String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
         String url_end = "&results=1&resultsOffers=1&format=json";
@@ -90,7 +91,7 @@ public class ShoppingCartResource {
                 keyword_urls.add(url_formatted);
             }
         }
-        Vector<String> all_items = new Vector<String>();
+        Vector<Item> all_items = new Vector<Item>();
         for(int k = 0; k < keyword_urls.size(); k++) {
             String catalog_response = "";
             String api_url = keyword_urls.elementAt(k);
@@ -105,14 +106,10 @@ public class ShoppingCartResource {
                 catalog_response += inputLine;
             in.close();
             Vector<Item> items = parseItems(catalog_response);
-            for (int i =0; i < items.size(); i ++) {
-                all_items.addAll(items.elementAt(i).getImage_url());
-            }
-            // for demo purposes
-            if (k > 50) {
-                break;
-            }
-            //all_items.addAll(items);
+//            for (int i =0; i < items.size(); i ++) {
+//                all_items.addAll(items.elementAt(i).getImage_url());
+//            }
+            all_items.addAll(items);
         }
         System.out.println("done");
         return buildVectorResponse(all_items, format);
@@ -211,7 +208,10 @@ public class ShoppingCartResource {
                 .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
                 .build();
     }
-    private Response buildVectorResponse(Vector<String> response, Format format) {
+    private Response buildVectorResponse(Vector<Item> response, Format format) {
+        System.out.println(Response.ok(response)
+                .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
+                .build());
         return Response.ok(response)
                 .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
                 .build();
@@ -234,7 +234,7 @@ public class ShoppingCartResource {
             for (int j = 0; j < images.length(); j++) {
                 image_url.add(images.getJSONObject(j).get("value").toString());
             }
-            System.out.println(image_url);
+            // System.out.println(image_url);
             String title = cur_product.get("title").toString();
             String description = cur_product.has("description") ? cur_product.get("description").toString() : "";
             String url = cur_product.getJSONObject("url").get("value").toString();
@@ -249,9 +249,9 @@ public class ShoppingCartResource {
         return items;
     }
     //interact with tumblr api
-    private Vector<String> getTags(String keyword, String api_key, Vector<String> old_tags) throws Exception{
+    private Vector<String> getTags(String keyword, String api_key, Vector<String> old_tags, int count) throws Exception{
         TumblrTags ttags = new TumblrTags();
-        old_tags  = ttags.tumblrcalls(keyword, api_key, old_tags);
+        old_tags  = ttags.tumblrcalls(keyword, api_key, old_tags, count);
         return old_tags;
     }
 
@@ -262,7 +262,7 @@ public class ShoppingCartResource {
                 return false;
             }
         }
-        System.out.println(tag);
+        // System.out.println(tag);
 
         return true;
     }

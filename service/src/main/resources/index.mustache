@@ -59,9 +59,12 @@ jQuery(document).ready(function() {
         $.ajax({
             url: test_url,
             success:function(r) {
-                alert(r);
                 $("#get_results").html("<pre>" + JSON.stringify(r,null, 4) + "</pre>");
-            }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+            },
         });
     });
 
