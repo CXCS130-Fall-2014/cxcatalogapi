@@ -15,9 +15,13 @@
         This message comes from the backend through mustache: <span>{{helloWorldMsg}}</span>
     <div id="container" class="transitions-enabled infinite-scroll clearfix masonry">
   
-        {{#worlds}}
-            <div class="item" {{.}}></div>
-        {{/worlds}}
+        <!--{{#worlds}}
+            <div class="item" {{.}}>
+                <img class="image" />
+            </div>
+        {{/worlds}}-->
+        <div class="item">
+        </div>
 
     </div> <!-- container -->
 
@@ -64,14 +68,16 @@
                         dataType: 'json',
                         success:function(data) {
                             var imgs = [];
+                            var i = 0;
                             $.each(data, function() {
                                 $.each(this, function(k, v) {
                                     if (k == 'image_url') {
-                                        imgs = v;
+                                        imgs[i++] = v[3];
                                     }
                                 });
                             });
                             var newDivs = '';
+                            console.log(data);
                             console.log(imgs);
                             if (jQuery.isEmptyObject(imgs)) {
                                 reachEnd = 1;
@@ -81,7 +87,9 @@
                             } else {
                                 $('.loader').hide();
                                 for (var i = 0; i < imgs.length; i++) {
-                                    newDivs = newDivs + '<div class="item"' + imgs[i] + '></div>';
+                                    //newDivs = newDivs + '<div class="item"' + imgs[i] + '></div>';
+                                    //newDivs = newDivs + "<img class=image src=" + imgs[i] + "/>";
+                                    newDivs = newDivs + "<div class=item><img class=image src=" + imgs[i] + "/></div>";
                                 };
                                 newItems = $(newDivs).appendTo('#container');
                                 $("#container").isotope('appended', newItems );

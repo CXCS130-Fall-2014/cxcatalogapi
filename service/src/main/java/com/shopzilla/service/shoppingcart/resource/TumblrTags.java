@@ -24,13 +24,12 @@ public class TumblrTags{
 		return old_tags;
 	}
 
-	public Vector<String> tumblrcalls(String keywords, String api_key, Vector<String> old_tags) throws Exception{
+	public Vector<String> tumblrcalls(String keywords, String api_key, Vector<String> old_tags, int count) throws Exception{
 		String response = "";
 		String query = keywords.replaceAll(" ", "");
 		String m_api_key = api_key;
-		String m_url = "http://api.tumblr.com/v2/tagged?tag="+query+"&api_key="+api_key+"&limit=4";
+		String m_url = "http://api.tumblr.com/v2/tagged?tag="+query+"&api_key="+api_key+"&limit=" + count;
 		URL apicall = new URL(m_url);
-		System.out.println(apicall);
 		URLConnection t_ac = apicall.openConnection();
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
