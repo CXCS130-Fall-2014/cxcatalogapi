@@ -71,27 +71,51 @@ public class ShoppingCartResource {
         Vector<String> new_tags = new Vector<String>();
         new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
         int size = new_tags.size();
-        System.out.println(size);
         for(int i = 0; i < size; i++){
             String new_keywords = new_tags.get(i).toString();
             new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags);
         }
-        System.out.println(new_tags);
+        // System.out.println(new_tags);
+        String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
+        String url_end = "&results=1&resultsOffers=1&format=json";
+        Vector<String> keyword_urls = new Vector<String>();
+        for(int j = 0; j < new_tags.size(); j++) {
+            String tag = new_tags.elementAt(j);
+            if (tag != null && !tag.isEmpty()) {
+                String encoded = tag.replaceAll(" ", "%20");
+                if (!isAlpha(encoded)) {
+                    continue;
+                }
+                String url_formatted = url + encoded + url_end;
+                keyword_urls.add(url_formatted);
+            }
+        }
+        Vector<String> all_items = new Vector<String>();
+        for(int k = 0; k < keyword_urls.size(); k++) {
+            String catalog_response = "";
+            String api_url = keyword_urls.elementAt(k);
+            URL api_call = new URL(api_url);
+            URLConnection ac = api_call.openConnection();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            ac.getInputStream()));
+            String inputLine;
 
-        String catalog_response = "";
-        URL apicall = new URL("http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=shoes&results=20&resultsOffers=10&format=json");
-        URLConnection ac = apicall.openConnection();
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        ac.getInputStream()));
-        String inputLine;
-
-        while ((inputLine = in.readLine()) != null)
-            catalog_response+=inputLine;
-        in.close();
-        Vector<Item> items = parseItems(catalog_response);
-        System.out.println(items);
-        return buildVectorResponse(items, format);
+            while ((inputLine = in.readLine()) != null)
+                catalog_response += inputLine;
+            in.close();
+            Vector<Item> items = parseItems(catalog_response);
+            for (int i =0; i < items.size(); i ++) {
+                all_items.addAll(items.elementAt(i).getImage_url());
+            }
+            // for demo purposes
+            if (k > 50) {
+                break;
+            }
+            //all_items.addAll(items);
+        }
+        System.out.println("done");
+        return buildVectorResponse(all_items, format);
     }
 
     @Timed(name = "createShoppingCart")
@@ -187,7 +211,7 @@ public class ShoppingCartResource {
                 .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
                 .build();
     }
-    private Response buildVectorResponse(Vector<Item> response, Format format) {
+    private Response buildVectorResponse(Vector<String> response, Format format) {
         return Response.ok(response)
                 .type(format != null ? format.getMediaType() : Format.xml.getMediaType())
                 .build();
@@ -204,11 +228,15 @@ public class ShoppingCartResource {
             Vector<String> image_url = new Vector<String>();
             JSONObject cur_product = products.getJSONObject(i);
             JSONArray images = cur_product.getJSONObject("images").getJSONArray("image");
+            if (images.length() == 0) {
+                continue;
+            }
             for (int j = 0; j < images.length(); j++) {
                 image_url.add(images.getJSONObject(j).get("value").toString());
             }
+            System.out.println(image_url);
             String title = cur_product.get("title").toString();
-            String description = cur_product.get("description").toString();
+            String description = cur_product.has("description") ? cur_product.get("description").toString() : "";
             String url = cur_product.getJSONObject("url").get("value").toString();
 
             new_item.setImage_url(image_url);
@@ -227,5 +255,16 @@ public class ShoppingCartResource {
         return old_tags;
     }
 
+    public boolean isAlpha(String tag) {
+        char[] chars = tag.toCharArray();
+        for (char c : chars) {
+            if(!Character.isLetter(c) && c!='%' && !Character.isDigit(c)) {
+                return false;
+            }
+        }
+        System.out.println(tag);
+
+        return true;
+    }
     
 }

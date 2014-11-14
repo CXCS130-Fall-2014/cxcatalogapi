@@ -30,7 +30,6 @@ public class TumblrTags{
 		String m_api_key = api_key;
 		String m_url = "http://api.tumblr.com/v2/tagged?tag="+query+"&api_key="+api_key+"&limit=4";
 		URL apicall = new URL(m_url);
-		System.out.println(apicall);
 		URLConnection t_ac = apicall.openConnection();
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
