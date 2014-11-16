@@ -27,8 +27,14 @@ import java.io.*;
 import java.util.Vector;
 import java.lang.Object;
 
-
-
+import com.shopzilla.service.shoppingcart.SQLAccess;
+/*
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+*/
 /**
  * Controller for handling CRUD operations for a shopping cart.
  * @author Chris McAndrews
@@ -122,6 +128,13 @@ public class ShoppingCartResource {
     @Path("create")
     public Response create(@Valid ShoppingCartEntry shoppingCart,
                            @QueryParam("format") Format format) {
+
+    //System.out.println("LOOK HERE TOO!!!");
+    //SQLAccess testConnection = new SQLAccess();
+    //testConnection.testGetTumblrTags();
+
+    //System.out.println("OMG LOOK AT ME!!!!!");
+
 
         if (shoppingCart == null || shoppingCart.getShopperId() == null
                 || shoppingCart.getProductId() == null) {
