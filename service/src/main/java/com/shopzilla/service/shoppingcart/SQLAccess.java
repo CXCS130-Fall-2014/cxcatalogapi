@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.Vector;
+import com.shopzilla.service.shoppingcart.resource.Item;
 
 public class SQLAccess {
 
@@ -27,7 +28,6 @@ public class SQLAccess {
 
     public SQLAccess() {
         // nothing lol
-
     }
 
     //Code inserts a tumblr tag into the database
@@ -113,6 +113,55 @@ public class SQLAccess {
         return resultsList;
     }
 
+    //Take data on the the catalog's query tag and its other data elements. Inserts ONE catalog element.
+    public void insertCatalogData(String source_tag, Item catalogItem) {
+
+        //Get the last image in the Vector array for images because it has the best dimensions
+        Integer imageVectorSize = catalogItem.getImage_url().size();
+        String image_url = catalogItem.getImage_url().elementAt(imageVectorSize-1);
+
+        String redirect_url = catalogItem.getRedirect_url();
+        String title = catalogItem.getTitle();
+        String description = catalogItem.getDescription();
+        Double price = (double)catalogItem.getPrice();  //NOTE. Casting this to a double because getPrice returns an int...error in the class?
+
+        //Make sure we have a queried source and length for the string
+        if (source_tag.length() < 1 || redirect_url.length() < 1) {
+            return;
+        }
+
+        try {
+            Class.forName(dbClass);
+            Connection connection = DriverManager.getConnection(dbUrl, username, password);
+            Statement statement = connection.createStatement();
+
+            //Set the query string
+            String queryString = "INSERT INTO catalog_data(result_tag, add_date, image_url, redirect_url, title," +
+                    "description, price) values (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement preparedSmt = connection.prepareStatement(queryString);
+
+            //Set the values of the prepared statement
+            preparedSmt.setString(1, source_tag);
+            preparedSmt.setNull(2, java.sql.Types.TIMESTAMP);
+            preparedSmt.setString(3, image_url);
+            preparedSmt.setString(4, redirect_url);
+            preparedSmt.setString(5, title);
+            preparedSmt.setString(6, description);
+            preparedSmt.setDouble(7, price);
+
+            //Execute the prepared statement
+            preparedSmt.execute();
+
+            connection.close();
+            //System.out.println("FINISHED THE QUERY");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return;
+    }
+
     public void testInsertTumblrTags() {
         Vector<String> testVec = new Vector<String>();
         testVec.add("coffee");
@@ -123,6 +172,23 @@ public class SQLAccess {
         testVec.add("ranch dressing");
 
         insertTumblrTags("test", testVec);
+    }
+
+    public void testInsertCatalogData() {
+        String source_tag = "test";
+        Item testItem = new Item();
+
+        Vector<String> testVec = new Vector<String>();
+        testVec.add("coffee.jpg");
+        testVec.add("jellybeans.jpg");
+
+        testItem.setImage_url(testVec);
+        testItem.setRedirect_url("www.google.com");
+        testItem.setTitle("Dog Food");
+        testItem.setDescription("Your dog will love this. Trust us");
+        testItem.setPrice(100);
+
+        insertCatalogData(source_tag, testItem);
     }
 
     public void testGetTumblrTags() {
