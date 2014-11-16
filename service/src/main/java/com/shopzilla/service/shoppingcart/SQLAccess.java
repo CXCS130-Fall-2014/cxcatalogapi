@@ -74,19 +74,6 @@ public class SQLAccess {
         }
 
         return;
-
-            /*
-            ResultSet resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
-                String tableName = resultSet.getString(1);
-                System.out.println("Table name : " + tableName);
-            }
-            connection.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
      }
 
     //Get a number of strings based on category

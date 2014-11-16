@@ -108,29 +108,11 @@ public class ShoppingCartResource {
     public Response create(@Valid ShoppingCartEntry shoppingCart,
                            @QueryParam("format") Format format) {
 
-        //Sticking debugging stuff in here
-
-
-/*
-
-        String driverName = "org.gjt.mm.mysql.Driver";
-       // Class.forName(driverName);
-
-        String serverName = "localhost";
-        String mydatabase = "mydatabase";
-        String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
-
-        String username = "username";
-        String password = "password";
-        Connection connection = DriverManager.getConnection(url, username, password);
-
-*/
-
-    System.out.println("LOOK HERE TOO!!!");
+    //System.out.println("LOOK HERE TOO!!!");
     //SQLAccess testConnection = new SQLAccess();
     //testConnection.testGetTumblrTags();
 
-    System.out.println("OMG LOOK AT ME!!!!!");
+    //System.out.println("OMG LOOK AT ME!!!!!");
 
 
         if (shoppingCart == null || shoppingCart.getShopperId() == null
