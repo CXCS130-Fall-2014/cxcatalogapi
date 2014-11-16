@@ -128,7 +128,7 @@ public class ShoppingCartResource {
 
     System.out.println("LOOK HERE TOO!!!");
     //SQLAccess testConnection = new SQLAccess();
-    //testConnection.testInsertTumblrTags();
+    //testConnection.testGetTumblrTags();
 
     System.out.println("OMG LOOK AT ME!!!!!");
 
