@@ -77,17 +77,17 @@ public class SQLAccess {
      }
 
     //Get a number of strings based on category
-    public Vector<String> getTumblrTags(String category, Integer limNum) {
+    public Vector<String> getTumblrTags(String category, Integer limitNum) {
 
         //No shitty parameters please
-        if (category.length() < 1 || limNum < 1) {
+        if (category.length() < 1 || limitNum < 1) {
             return new Vector<String>();
         }
 
         //Query will get tags by category, limit it to how many we asked for (though no guarantees it will fulfill that many
         //because if you ask for 500 tags, there might only exist 200 tags in the db so it will only return 200.
         //Orders them by descending date so you get the most recently added tags.
-        String query = "SELECT result_tag FROM tumblr_tags WHERE category=\"" + category + "\" ORDER BY add_date DESC LIMIT " + limNum.toString();
+        String query = "SELECT result_tag FROM tumblr_tags WHERE category=\"" + category + "\" ORDER BY add_date DESC LIMIT " + limitNum.toString();
         //System.out.println(query);
         Vector<String> resultsList = new Vector<String>();
 
@@ -114,7 +114,7 @@ public class SQLAccess {
     }
 
     //Take data on the the catalog's query tag and its other data elements. Inserts ONE catalog element.
-    public void insertCatalogData(String source_tag, Item catalogItem) {
+    public void insertCatalogData(String keyword, Item catalogItem) {
 
         //Get the last image in the Vector array for images because it has the best dimensions
         Integer imageVectorSize = catalogItem.getImage_url().size();
@@ -126,7 +126,7 @@ public class SQLAccess {
         Double price = (double)catalogItem.getPrice();  //NOTE. Casting this to a double because getPrice returns an int...error in the class?
 
         //Make sure we have a queried source and length for the string
-        if (source_tag.length() < 1 || redirect_url.length() < 1) {
+        if (keyword.length() < 1 || redirect_url.length() < 1) {
             return;
         }
 
@@ -141,7 +141,7 @@ public class SQLAccess {
             PreparedStatement preparedSmt = connection.prepareStatement(queryString);
 
             //Set the values of the prepared statement
-            preparedSmt.setString(1, source_tag);
+            preparedSmt.setString(1, keyword);
             preparedSmt.setNull(2, java.sql.Types.TIMESTAMP);
             preparedSmt.setString(3, image_url);
             preparedSmt.setString(4, redirect_url);
@@ -162,7 +162,60 @@ public class SQLAccess {
         return;
     }
 
-    public void testInsertTumblrTags() {
+    //Returns the most recent catalog item associated with the source_tag.
+    public Item getCatalogData(String keyword) {
+
+        Item resultItem = new Item();
+
+        //Check for bad parameters
+        if (keyword.length() < 1) {
+            return new Item();
+        }
+
+        //Query will fetch a catalog item based on the parameter used
+        String query = "SELECT image_url, redirect_url, title, description, description, price FROM catalog_data WHERE result_tag=\"" +
+               keyword + "\" ORDER BY add_date DESC LIMIT 1";
+
+        try {
+            Class.forName(dbClass);
+            Connection connection = DriverManager.getConnection(dbUrl, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            //Go through the results and add them into our return vector
+            while(resultSet.next()) {
+                /*
+                System.out.println(resultSet.getString("image_url"));
+                System.out.println(resultSet.getString("redirect_url"));
+                System.out.println(resultSet.getString("title"));
+                System.out.println(resultSet.getString("description"));
+                System.out.println(resultSet.getDouble("price")); */
+                //resultItem.setImage_url("image_url");
+
+                Vector<String> tempUrlHolder = new Vector();
+                tempUrlHolder.add(resultSet.getString("image_url"));
+
+                resultItem.setImage_url(tempUrlHolder);
+                resultItem.setRedirect_url(resultSet.getString("redirect_url"));
+                resultItem.setTitle(resultSet.getString("title"));
+                resultItem.setDescription(resultSet.getString("description"));
+                resultItem.setPrice((int)resultSet.getDouble("price"));
+            }
+            connection.close();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultItem;
+    }
+
+    private void testGetCatalogData() {
+        Item testItem = new Item();
+        testItem = getCatalogData("test");
+    }
+
+    private void testInsertTumblrTags() {
         Vector<String> testVec = new Vector<String>();
         testVec.add("coffee");
         testVec.add("jellybeans");
@@ -174,7 +227,7 @@ public class SQLAccess {
         insertTumblrTags("test", testVec);
     }
 
-    public void testInsertCatalogData() {
+    private void testInsertCatalogData() {
         String source_tag = "test";
         Item testItem = new Item();
 
@@ -191,7 +244,7 @@ public class SQLAccess {
         insertCatalogData(source_tag, testItem);
     }
 
-    public void testGetTumblrTags() {
+    private void testGetTumblrTags() {
         Vector<String> testVec = getTumblrTags("test", 5);
 
         System.out.println(testVec.toString());
