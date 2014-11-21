@@ -27,14 +27,8 @@ import java.io.*;
 import java.util.Vector;
 import java.lang.Object;
 
-import com.shopzilla.service.shoppingcart.SQLAccess;
-/*
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-*/
+
+
 /**
  * Controller for handling CRUD operations for a shopping cart.
  * @author Chris McAndrews
@@ -60,7 +54,8 @@ public class ShoppingCartResource {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("apicall/shopperId/{shopperId}")
     public Response get(@PathParam("shopperId") Long shopperId,
-                        @QueryParam("format") Format format) throws Exception {
+                        @QueryParam("format") Format format,
+                        @QueryParam("load") Integer load) throws Exception {
 
         if (shopperId == null) {
             LOG.debug("A valid shopper id must be provided");
@@ -118,7 +113,21 @@ public class ShoppingCartResource {
             all_items.addAll(items);
         }
         System.out.println("done");
-        return buildVectorResponse(all_items, format);
+        //return buildVectorResponse(all_items, format);
+        Vector<Item> new_items = new Vector<Item>();
+        if ((load+1)*10 < all_items.size()) {
+            for (int i = load*10; i < load*10+10; i++) {
+                new_items.add(all_items.get(i));
+            }
+        } else if (load*10 < all_items.size()) {
+            for (int i = load*10; i < all_items.size(); i++) {
+                new_items.add(all_items.get(i));
+            }
+        }
+
+        //System.out.println(new_items);
+
+        return buildVectorResponse(new_items, format);
     }
 
     @Timed(name = "createShoppingCart")
@@ -128,13 +137,6 @@ public class ShoppingCartResource {
     @Path("create")
     public Response create(@Valid ShoppingCartEntry shoppingCart,
                            @QueryParam("format") Format format) {
-
-    //System.out.println("LOOK HERE TOO!!!");
-    //SQLAccess testConnection = new SQLAccess();
-    //testConnection.testGetTumblrTags();
-
-    //System.out.println("OMG LOOK AT ME!!!!!");
-
 
         if (shoppingCart == null || shoppingCart.getShopperId() == null
                 || shoppingCart.getProductId() == null) {
