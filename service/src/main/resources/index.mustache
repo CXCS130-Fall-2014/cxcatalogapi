@@ -39,17 +39,6 @@
 <script>
   $(function(){
 
-    var $container = $('#container').imagesLoaded( function() {
-        $container.isotope({
-            itemSelector : '.item'
-        });
-        // filter items on button click
-        $('#filters').on( 'click', 'button', function() {
-            var filterValue = $(this).attr('data-filter');
-            $container.isotope({ filter: filterValue });
-        });
-    });
-
     var load = 0;
     var reachEnd = 0;
     $('.loader').hide();
@@ -78,6 +67,7 @@
                         success:function(data) {
                             var imgs = [];
                             var descriptions = [];
+                            var redirect_url = [];
                             var i = 0;
                             $.each(data, function() {
                                 $.each(this, function(k, v) {
@@ -85,6 +75,8 @@
                                         imgs[i] = v[3];
                                     } else if (k == 'description') {
                                         descriptions[i] = v;
+                                    } else if (k == 'redirect_url') {
+                                        redirect_url[i] = v;
                                     }
                                 });
                                 i++;
@@ -102,10 +94,10 @@
                                 for (var i = 0; i < imgs.length; i++) {
                                     var price = "price" + Math.floor(Math.random()*4);
                                     newDivs = newDivs + 
-                                    "<div class='item " + price +  "'><img class=image src=" + imgs[i] + "/><div class=description>" + descriptions[i] +"</div></div>";
+                                    "<div class='item " + price +  "'><a href=" + redirect_url [i] + "><img class=image src=" + imgs[i] + "/></a><div class=description>" + descriptions[i] +"</div></div>";
                                 };
                                 newItems = $(newDivs).appendTo('#container');
-                                $newItems.imagesLoaded(function(){
+                                $('#container').imagesLoaded( function(){
                                     $("#container").isotope('appended', newItems );
                                 });
                             }
@@ -121,7 +113,16 @@
     });
     
     
-
+    var $container = $('#container').imagesLoaded( function() {
+        $container.isotope({
+            itemSelector : '.item'
+        });
+        // filter items on button click
+        $('#filters').on( 'click', 'button', function() {
+            var filterValue = $(this).attr('data-filter');
+            $container.isotope({ filter: filterValue });
+        });
+    });
 });
 </script>
 
