@@ -21,7 +21,6 @@ import java.io.File; //for test
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
 public class IndexResource {
-
     @GET
     public IndexView handle() {
         IndexView view = new IndexView("/index.mustache");
