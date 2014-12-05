@@ -33,18 +33,18 @@ public class IndexResource {
         List<String> worlds = new ArrayList<String>();
 
         // for test
-        File folder = new File("src/main/resources/assets/static/img");
+        /*File folder = new File("src/main/resources/assets/static/img");
 
           File curdir = new File(new File(".").getAbsolutePath());
 
-        File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = folder.listFiles();*/
 
         //int j = 0;
         //worlds.add(new ArrayList<String>());
 
-        for (int i = 0; i < listOfFiles.length; i++) {
+        /*for (int i = 0; i < listOfFiles.length; i++) {
                 String filePath = "style=background:url(/assets/static/img/" + listOfFiles[i].getName() + ");";
-                worlds.add(filePath);
+                worlds.add(filePath);*/
                 /*worlds.get(j).add(filePath);
                 if (j % 10 == 0) {
                     j++;
