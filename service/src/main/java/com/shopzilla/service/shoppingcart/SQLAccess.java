@@ -225,9 +225,6 @@ public class SQLAccess {
         String removeCatQuery = "DELETE s1 FROM tumblr_tags s1, tumblr_tags s2 WHERE s1.category=\'" + category + "\'" +
                 " AND s1.result_tag = s2.result_tag AND s1.add_date < s2.add_date";
 
-
-        System.out.println(removeCatQuery);
-
         if (category == "all") {
             query = removeAllQuery;
         }
@@ -251,12 +248,9 @@ public class SQLAccess {
     }
 
 
-
     /*
-    DELETE s1 FROM tumblr_tags s1, tumblr_tags s2 WHERE s1.category='test3' AND s1.result_tag = s2.result_tag AND s1.add_date < s2.add_date;
-
-    DELETE s1 FROM tumblr_tags s1, tumblr_tags s2 WHERE s1.result_tag = s2.result_tag AND s1.add_date < s2.add_date;
-*/
+     * Functions that are used for testing.
+     */
 
     private void testGetCatalogData() {
         Item testItem = new Item();
