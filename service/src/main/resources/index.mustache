@@ -11,18 +11,15 @@
 <div class="content">
           <h1>Shopping Cart Service</h1>
 
-    <!-- The following text comes from mustache -->
-        This message comes from the backend through mustache: <span>{{helloWorldMsg}}</span>
+    <div id="filters" class="button-group">
+        <button class="button is-checked" data-filter="*">show all</button>
+        <button class="button" data-filter=".price1">price1</button>
+        <button class="button" data-filter=".price2">price2</button>
+        <button class="button" data-filter=".price3">price3</button>
+    </div>
     <div id="container" class="transitions-enabled infinite-scroll clearfix masonry">
-  
-        <!--{{#worlds}}
-            <div class="item" {{.}}>
-                <img class="image" />
-            </div>
-        {{/worlds}}-->
         <div class="item">
         </div>
-
     </div> <!-- container -->
 
     <div class="loader-wrapper">
@@ -35,7 +32,6 @@
 <script type="text/javascript" src="/assets/jquery-1.9.1.min.js"></script>
 <script src="/assets/jquery.imagesloaded.min.js"></script>
 <script src="/assets/jquery.infinitescroll.min.js"></script>
-<script src="/assets/jquery.masonry.min.js"></script>
 <script src="/assets/jquery.isotope.min.js"></script>
 
 <script>
@@ -68,17 +64,24 @@
                         dataType: 'json',
                         success:function(data) {
                             var imgs = [];
+                            var descriptions = [];
+                            var redirect_url = [];
                             var i = 0;
                             $.each(data, function() {
                                 $.each(this, function(k, v) {
                                     if (k == 'image_url') {
-                                        imgs[i++] = v[3];
+                                        imgs[i] = v[3];
+                                    } else if (k == 'description') {
+                                        descriptions[i] = v;
+                                    } else if (k == 'redirect_url') {
+                                        redirect_url[i] = v;
                                     }
                                 });
+                                i++;
                             });
                             var newDivs = '';
-                            console.log(data);
                             console.log(imgs);
+                            console.log(descriptions);
                             if (jQuery.isEmptyObject(imgs)) {
                                 reachEnd = 1;
                                 $('.loader img').hide();
@@ -87,12 +90,14 @@
                             } else {
                                 $('.loader').hide();
                                 for (var i = 0; i < imgs.length; i++) {
-                                    //newDivs = newDivs + '<div class="item"' + imgs[i] + '></div>';
-                                    //newDivs = newDivs + "<img class=image src=" + imgs[i] + "/>";
-                                    newDivs = newDivs + "<div class=item><img class=image src=" + imgs[i] + "/></div>";
+                                    var price = "price" + Math.floor(Math.random()*4);
+                                    newDivs = newDivs + 
+                                    "<div class='item " + price +  "'><a href=" + redirect_url[i] + "><img class=image src=" + imgs[i] + "/></a><div class=description>" + descriptions[i] +"</div></div>";
                                 };
                                 newItems = $(newDivs).appendTo('#container');
-                                $("#container").isotope('appended', newItems );
+                                $('#container').imagesLoaded( function(){
+                                    $("#container").isotope('appended', newItems );
+                                });
                             }
                         },
                         error: function(xhr, status, error) {
@@ -103,15 +108,20 @@
                     load++;
                 }
             }
-      });
+    });
     
     
-      var $container = $('#container');
-    
-      $container.isotope({
-        itemSelector : '.item'
-      });
-  });
+    var $container = $('#container').imagesLoaded( function() {
+        $container.isotope({
+            itemSelector : '.item'
+        });
+        // filter items on button click
+        $('#filters').on( 'click', 'button', function() {
+            var filterValue = $(this).attr('data-filter');
+            $container.isotope({ filter: filterValue });
+        });
+    });
+});
 </script>
 
 <!-- GET METHOD -->
