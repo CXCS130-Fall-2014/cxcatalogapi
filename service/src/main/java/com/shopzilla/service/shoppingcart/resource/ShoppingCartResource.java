@@ -39,9 +39,9 @@ import java.lang.Object;
 public class ShoppingCartResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShoppingCartResource.class);
+
     private ShoppingCartDao dao;
     private Mapper mapper;
-
 
     public ShoppingCartResource(ShoppingCartDao dao, Mapper mapper) {
         this.dao = dao;
@@ -69,8 +69,6 @@ public class ShoppingCartResource {
 //        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
 //            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
 //        }
-        //time
-        final long startTime = System.nanoTime();
 
         Vector<String> new_tags = new Vector<String>();
         new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
@@ -79,6 +77,7 @@ public class ShoppingCartResource {
             String new_keywords = new_tags.get(i).toString();
             new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
         }
+
         // System.out.println(new_tags);
         String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
         String url_end = "&results=1&resultsOffers=1&format=json";
@@ -94,29 +93,6 @@ public class ShoppingCartResource {
                 keyword_urls.add(url_formatted);
             }
         }
-        final long duration = System.nanoTime() - startTime;
-        System.out.println("duration:" + duration);
-        /* last time I tested, the result is 
-        INFO  [2014-12-03 09:08:55,078] org.eclipse.jetty.server.AbstractConnector: Started InstrumentedBlockingChannelConnector@0.0.0.0:7500
-        1.0
-        Marc Jacobs
-        marc jacobs<=========================================================
-        1.0
-        Marc by Marc Jacobs
-        marc by marc jacobs<=========================================================
-        1.0
-        Marc Jacobs
-        marcjacobs<=========================================================
-        0.8888888888888888
-        7 Diamonds
-        diamonds<=========================================================
-        duration:5252222000
-        done1
-        com.sun.jersey.core.spi.factory.ResponseImpl@1c4a1bda
-        
-        so I guess it's okay..?
-        */
-
         Vector<Item> all_items = new Vector<Item>();
         for(int k = 0; k < keyword_urls.size(); k++) {
             String catalog_response = "";
@@ -137,8 +113,7 @@ public class ShoppingCartResource {
 //            }
             all_items.addAll(items);
         }
-
-        System.out.println("done1");
+        System.out.println("done");
         //return buildVectorResponse(all_items, format);
         Vector<Item> new_items = new Vector<Item>();
         if ((load+1)*10 < all_items.size()) {
@@ -279,6 +254,13 @@ public class ShoppingCartResource {
             String title = cur_product.get("title").toString();
             String description = cur_product.has("description") ? cur_product.get("description").toString() : "";
             String url = cur_product.getJSONObject("url").get("value").toString();
+            String price_dollar = cur_product.has("price") ? cur_product.getJSONObject("price").get("value").toString() : "";
+            double price = 0;
+            if (price_dollar != "") {
+                price = Double.parseDouble(price_dollar.substring(1));
+            }
+            System.out.println(price);
+
 
             new_item.setImage_url(image_url);
             new_item.setDescription(description);
