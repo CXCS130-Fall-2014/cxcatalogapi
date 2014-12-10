@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.Map;
 import java.util.Vector;
 import com.shopzilla.service.shoppingcart.resource.Item;
 
@@ -28,6 +29,76 @@ public class SQLAccess {
 
     public SQLAccess() {
         // nothing lol
+    }
+
+    //Insert a new ranking into the database
+    public void insertPopularTags(Map<String, Integer> popularTags) {
+
+        //Make sure popularTags is initialized
+        if (popularTags == null) {
+            return;
+        }
+
+        try {
+            Class.forName(dbClass);
+            Connection connection = DriverManager.getConnection(dbUrl, username, password);
+            Statement statement = connection.createStatement();
+
+            //Retrieve the key value pairs
+            String setKey;
+            Integer setVal;
+            for (String key : popularTags.keySet()) {
+                setKey = key;
+                setVal = popularTags.get(key);
+
+                System.out.println("key: " + setKey + " value: " + setVal);
+
+                String queryString = "INSERT INTO popular_tags(`key`, `value`, `add_date`) values (?, ?, ?)";
+                PreparedStatement preparedSmt = connection.prepareStatement(queryString);
+
+                preparedSmt.setString(1, setKey);
+                preparedSmt.setInt(2, setVal);
+                preparedSmt.setNull(3, java.sql.Types.TIMESTAMP);
+
+                preparedSmt.execute();
+            }
+            connection.close();
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public String getPopularTags(String key) {
+
+        if (key.length() < 1) {
+            return "0";
+        }
+
+        String query = "SELECT value FROM `popular_tags` WHERE `key` = '" + key + "'";
+        String queryVal = new String();
+        try {
+            Class.forName(dbClass);
+            Connection connection = DriverManager.getConnection(dbUrl, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            //Go through the results and add them into our return vector
+            while(resultSet.next()) {
+                //System.out.println(resultSet.getString("result_tag"));
+                queryVal = resultSet.getString("value");
+            }
+
+            connection.close();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return queryVal;
     }
 
     //Code inserts a tumblr tag into the database
