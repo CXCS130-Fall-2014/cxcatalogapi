@@ -190,8 +190,8 @@ public class ranking {
             lifetime = maxlifetime;
             System.out.println("writing");
             String newfilename = catname + "mutate";
-            String filename = String.format("src/brandnames/%s.xlsx", catname);
-            writingExcel(newfilename);
+            String filename = String.format("src/brandnames/%s.xlsx", newfilename);
+            writingExcel(filename);
             scores.clear();
             Map<String, Integer>  new_brandnames = readingExcelwithScore(newfilename, "mutable");
             for (String key: new_brandnames.keySet()) {
