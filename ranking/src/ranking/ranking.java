@@ -46,6 +46,7 @@ public class ranking {
                 Thread.sleep(2000);
                 lifetime --;
             }
+
         } catch(Exception e) {
             System.out.println("error");
             System.out.println(e);
@@ -77,7 +78,7 @@ public class ranking {
             try {
                 cell = row.getCell(0);
                 if (cell != null) {
-                    brandnames.add(cell.toString().substring(1));
+                    brandnames.add(cell.toString());
                 }
             } catch(Exception e) {
 
@@ -88,6 +89,7 @@ public class ranking {
 
     public Map<String, Integer>  readingExcelwithScore(String filename, String sheetname) throws IOException
     {
+        System.out.println("reading file name ");
         InputStream ExcelFileToRead = new FileInputStream(filename);
         XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
 
@@ -113,12 +115,13 @@ public class ranking {
                 cell = row.getCell(0);
                 score = row.getCell(1);
                 if (cell != null && score !=null) {
-                    newbrandscores.put(cell.toString().substring(1), Integer.parseInt(score.toString().substring(1)));
+                    newbrandscores.put(cell.toString(), Double.valueOf(score.toString()).intValue());
                 }
             } catch(Exception e) {
 
             }
         }
+        System.out.println(newbrandscores);
         return newbrandscores;
     }
     public void writingExcel(String filename) throws IOException {
@@ -140,7 +143,6 @@ public class ranking {
                 XSSFRow row = sheet.createRow(r);
 
                 XSSFCell cell = row.createCell(0);
-
                 cell.setCellValue(key);
 
                 XSSFCell cell2 = row.createCell(1);
@@ -150,7 +152,7 @@ public class ranking {
                 r++;
             }
         }
-        FileOutputStream fileOut = new FileOutputStream(filename);
+        FileOutputStream fileOut = new FileOutputStream(filename, false);
         //write this workbook to an Outputstream.
         wb.write(fileOut);
         fileOut.flush();
@@ -193,7 +195,7 @@ public class ranking {
             String filename = String.format("src/brandnames/%s.xlsx", newfilename);
             writingExcel(filename);
             scores.clear();
-            Map<String, Integer>  new_brandnames = readingExcelwithScore(newfilename, "mutable");
+            Map<String, Integer>  new_brandnames = readingExcelwithScore(filename, "mutable");
             for (String key: new_brandnames.keySet()) {
                 int val = new_brandnames.get(key);
                 scores.put(key, val);
@@ -209,6 +211,7 @@ public class ranking {
 
     public void rank() throws Exception {
         Vector<String> new_tags = getNewTags();
+//        Vector<String> new_tags = new Vector<String>();
 //        new_tags.add("Pink Tartan");
 //        new_tags.add("Vix");
 //        new_tags.add("Oilily");
@@ -220,10 +223,6 @@ public class ranking {
 //            System.out.println(isAlpha(new_tags.elementAt(i)));
             //if (!isAlpha(new_tags.elementAt(i))) continue;
             String new_tag = new_tags.elementAt(i);
-//            System.out.println("!!!!");
-//            System.out.println(i);
-//            System.out.println(new_tag);
-//            System.out.println("!!!!");
             for (String key: scores.keySet()) {
                 double match_percent = LevenshteinDistance(key, new_tag);
 
@@ -234,9 +233,18 @@ public class ranking {
                     }
                     scores.put(key, count+1);
                     match = true;
+//                    System.out.println("???????????????????");
+//                    System.out.println("!!!!");
+//                    System.out.println(i);
+                    System.out.println(new_tag);
+                    System.out.println("!!!!");
+                    System.out.println(count);
+//                    System.out.println("???????????????????");
                 }
             }
             if (match == false) {
+//                System.out.println("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+//                System.out.println(new_tag);
                 scores.put(new_tag, 0);
             }
         }
