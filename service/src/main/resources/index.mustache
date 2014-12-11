@@ -93,6 +93,13 @@
                             } else {
                                 $('.loader').hide();
                                 for (var i = 0; i < imgs.length; i++) {
+                                    if (price[i]<=50) {
+                                        price = "price1";
+                                    } else if (price[i]>=50 && price[i]<=100) {
+                                        price = "price2";
+                                    } else if (price[i]>=100 && price[i]<=200) {
+                                        price = "price3"
+                                    }
                                     //var price = "price" + Math.floor(Math.random()*4);
                                     var priceDiv = '';
                                     if (price[i] > 0) {
@@ -126,47 +133,14 @@
     
     
     var $container = $('#container').imagesLoaded( function() {
-        /*var iso = new Isotope( '#container', {
-            itemSelector: '.item',
-        });*/
+
         $container.isotope({
             itemSelector : '.item'
         });
         // filter items on button click
-        /*$('#filters').on( 'click', 'button', function() {
+        $('#filters').on( 'click', 'button', function() {
             var filterValue = $(this).attr('data-filter');
             $container.isotope({ filter: filterValue });
-        });*/
-        var filterFns = {
-        // show if number is greater than 50
-            price1: function( itemElem ) {
-              var price = getText( itemElem.querySelector('.price') );
-              price = parseFloat(Number( price.replace(/[^0-9\.]+/g,"")));
-              return (price > 50 && price < 100);
-            },
-            price2: function( itemElem ) {
-              var price = getText( itemElem.querySelector('.price') );
-              price = parseFloat(Number( price.replace(/[^0-9\.]+/g,"")));
-              return price > 100;
-            },
-            price3: function( itemElem ) {
-              var price = getText( itemElem.querySelector('.price') );
-              price = parseFloat(Number( price.replace(/[^0-9\.]+/g,"")));
-              return price < 50;
-            },
-        };
-
-        // bind filter button click
-        var filtersElem = document.querySelector('#filters');
-        eventie.bind( filtersElem, 'click', function( event ) {
-        // only work with buttons
-            if ( !matchesSelector( event.target, 'button' ) ) {
-                return;
-            }
-            var filterValue = event.target.getAttribute('data-filter');
-            // use matching filter function
-            filterValue = filterFns[ filterValue ] || filterValue;
-            iso.arrange({ filter: filterValue });
         });
 
         // change is-checked class on buttons
