@@ -25,7 +25,7 @@ import java.util.List;
 public class ranking {
     public static final int MAX_LIFETIME = 2;
     public static final int FREQUENT_SH = 3;
-    public static final int WAIT_TIME = 20000;
+    public static final int WAIT_TIME = 120000;
     public void run(String cat) {
         try {
             int ctry = 10;
@@ -236,9 +236,9 @@ public class ranking {
 //                    System.out.println("???????????????????");
 //                    System.out.println("!!!!");
 //                    System.out.println(i);
-                    System.out.println(new_tag);
-                    System.out.println("!!!!");
-                    System.out.println(count);
+//                    System.out.println(new_tag);
+//                    System.out.println("!!!!");
+//                    System.out.println(count);
 //                    System.out.println("???????????????????");
                 }
             }
