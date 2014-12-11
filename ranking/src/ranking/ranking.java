@@ -27,14 +27,18 @@ import ranking.SQLAccess
 public class ranking {
     public static final int MAX_LIFETIME = 2;
     public static final int FREQUENT_SH = 3;
-    public static final int WAIT_TIME = 1800000;
+
+    public static final int WAIT_TIME = 10000;
     public SQLAccess db = new SQLAccess();
-    public void run() {
+
+    public void run(String cat) {
         try {
             int ctry = 10;
             // scheduling
             System.out.println("reading");
-            brandnames = readingExcel("src/ranking/brandname.xlsx", "new");
+            catname = cat;
+            String filename = String.format("src/brandnames/%s.xlsx", catname);
+            brandnames = readingExcel(filename, "new");
             for (int i = 0; i < brandnames.size(); i++) {
                 scores.put(brandnames.elementAt(i), 0);
             }
@@ -125,9 +129,8 @@ public class ranking {
     public void writingExcel(String filename) throws IOException {
         String sheetName = "mutable";//name of sheet
 
-        InputStream ExcelFileToRead = new FileInputStream(filename);
-
-        XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
+        //InputStream ExcelFileToRead = new FileInputStream(filename);
+        XSSFWorkbook  wb = new XSSFWorkbook();
         XSSFSheet sheet;
         try {
             sheet = wb.createSheet(sheetName);
@@ -195,9 +198,11 @@ public class ranking {
 
             lifetime = maxlifetime;
             System.out.println("writing");
-            writingExcel("src/ranking/brandname.xlsx");
+            String newfilename = catname + "mutate";
+            String filename = String.format("src/brandnames/%s.xlsx", newfilename);
+            writingExcel(filename);
             scores.clear();
-            Map<String, Integer>  new_brandnames = readingExcelwithScore("src/ranking/brandname.xlsx", "mutable");
+            Map<String, Integer>  new_brandnames = readingExcelwithScore(newfilename, "mutable");
             for (String key: new_brandnames.keySet()) {
                 int val = new_brandnames.get(key);
                 scores.put(key, val);
@@ -361,4 +366,5 @@ public class ranking {
     private Map<String, Integer> populartags = new HashMap<String, Integer>();
     private int lifetime = MAX_LIFETIME;
     private int maxlifetime = MAX_LIFETIME;
+    private String catname = "cloth";
 }
