@@ -31,7 +31,9 @@ public class ranking {
             int ctry = 10;
             // scheduling
             System.out.println("reading");
+            System.out.println(cat);
             catname = cat;
+
             String filename = String.format("src/brandnames/%s.xlsx", catname);
             brandnames = readingExcel(filename, "new");
             for (int i = 0; i < brandnames.size(); i++) {
@@ -55,6 +57,7 @@ public class ranking {
 
     public Vector<String> readingExcel(String filename, String sheetname) throws IOException
     {
+        System.out.println(filename);
         InputStream ExcelFileToRead = new FileInputStream(filename);
         XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
 
@@ -167,7 +170,7 @@ public class ranking {
 
     public Vector<String> getNewTags() throws Exception {
         Vector<String> new_tags = new Vector<String>();
-        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
+        new_tags = getTags(catname, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
         int size = new_tags.size();
         for(int i = 0; i < size; i++){
             String new_keywords = new_tags.get(i).toString();
