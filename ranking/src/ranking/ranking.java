@@ -25,7 +25,7 @@ import java.util.List;
 public class ranking {
     public static final int MAX_LIFETIME = 2;
     public static final int FREQUENT_SH = 3;
-    public static final int WAIT_TIME = 1800000;
+    public static final int WAIT_TIME = 20000;
     public void run() {
         try {
             int ctry = 10;
@@ -83,16 +83,54 @@ public class ranking {
         }
         return brandnames;
     }
+
+    public Map<String, Integer>  readingExcelwithScore(String filename, String sheetname) throws IOException
+    {
+        InputStream ExcelFileToRead = new FileInputStream(filename);
+        XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
+
+        XSSFWorkbook test = new XSSFWorkbook();
+        XSSFSheet sheet;
+        if (sheetname == "new") {
+            sheet = wb.getSheetAt(0);
+        }
+        else {
+            sheet = wb.getSheet(sheetname);
+        }
+        sheet = wb.getSheetAt(0);
+        XSSFRow row;
+        XSSFCell cell;
+        XSSFCell score;
+
+        Iterator rows = sheet.rowIterator();
+
+        while(rows.hasNext())
+        {
+            row = (XSSFRow) rows.next();
+            try {
+                cell = row.getCell(0);
+                score = row.getCell(1);
+                if (cell != null && score !=null) {
+                    newbrandscores.put(cell.toString().substring(1), Integer.parseInt(score.toString().substring(1)));
+                }
+            } catch(Exception e) {
+
+            }
+        }
+        return newbrandscores;
+    }
     public void writingExcel(String filename) throws IOException {
         String sheetName = "mutable";//name of sheet
-        System.out.println("1");
-        System.out.println("2");
+
         InputStream ExcelFileToRead = new FileInputStream(filename);
-        System.out.println("3");
+
         XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
-        System.out.println("4");
-        XSSFSheet sheet = wb.createSheet(sheetName) ;
-        System.out.println("5");
+        XSSFSheet sheet;
+        try {
+            sheet = wb.createSheet(sheetName);
+        } catch (Exception e) {
+            sheet = wb.getSheet(sheetName);
+        }
 
         int r = 0;
         for (String key: populartags.keySet())
@@ -103,6 +141,10 @@ public class ranking {
                 XSSFCell cell = row.createCell(0);
 
                 cell.setCellValue(key);
+
+                XSSFCell cell2 = row.createCell(1);
+
+                cell2.setCellValue(populartags.get(key));
 
                 r++;
             }
@@ -148,12 +190,16 @@ public class ranking {
             System.out.println("writing");
             writingExcel("src/ranking/brandname.xlsx");
             scores.clear();
-            Vector<String> new_brandnames = readingExcel("src/ranking/brandname.xlsx", "mutable");
-            for (int i = 0; i < brandnames.size(); i++) {
-                scores.put(brandnames.elementAt(i), 0);
+            Map<String, Integer>  new_brandnames = readingExcelwithScore("src/ranking/brandname.xlsx", "mutable");
+            for (String key: new_brandnames.keySet()) {
+                int val = new_brandnames.get(key);
+                scores.put(key, val);
             }
-            for (int i = 0; i < new_brandnames.size(); i++) {
-                scores.put(new_brandnames.elementAt(i), 0);
+            for (int i = 0; i < brandnames.size(); i++) {
+                String toadd = brandnames.elementAt(i);
+                if (scores.get(toadd) == null) {
+                    scores.put(brandnames.elementAt(i), 0);
+                }
             }
         }
     }
@@ -303,6 +349,7 @@ public class ranking {
     // right now use it as private member variable, later change to db acess
     private Vector<String> tags = new Vector<String>();
     private Map<String, Integer> scores = new HashMap<String, Integer>();
+    private Map<String, Integer> newbrandscores = new HashMap<String, Integer>();
     private Vector<String> brandnames = new Vector<String>();
     private Map<String, Integer> populartags = new HashMap<String, Integer>();
     private int lifetime = MAX_LIFETIME;
