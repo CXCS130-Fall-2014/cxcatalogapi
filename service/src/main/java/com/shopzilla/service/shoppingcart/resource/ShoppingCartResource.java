@@ -21,13 +21,18 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
 import java.net.*;
 import java.io.*;
+import java.util.Map;
 import java.util.Vector;
 import java.lang.Object;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import com.shopzilla.service.shoppingcart.SQLAccess;
+//import com.shopzilla.service.shoppingcart.resource.ranking;
 
 
 /**
@@ -64,6 +69,18 @@ public class ShoppingCartResource {
             LOG.debug("A valid shopper id must be provided");
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
+        /* TESTING
+        Map<String, Integer> hello = new HashMap<String, Integer>();
+        hello.put("mario", 10);
+        hello.put("test2", 14);
+
+        SQLAccess fart = new SQLAccess();
+        System.out.println("TEST" + fart.getPopularTags("test1"));
+        fart.insertPopularTags(hello);
+        */
+        //System.out.println("OKAY TEST....");
+        //ranking ranking_obj = new ranking();
+        //ranking_obj.run();
 
 //        ShoppingCartResponse response = new ShoppingCartResponse();
 //        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
