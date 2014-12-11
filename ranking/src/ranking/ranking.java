@@ -28,7 +28,7 @@ public class ranking {
     public static final int MAX_LIFETIME = 2;
     public static final int FREQUENT_SH = 3;
 
-    public static final int WAIT_TIME = 10000;
+    public static final int WAIT_TIME = 120000;
     public SQLAccess db = new SQLAccess();
 
 
