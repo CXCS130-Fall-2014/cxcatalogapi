@@ -56,7 +56,9 @@ public class ShoppingCartResource {
     @Path("apicall/shopperId/{shopperId}")
     public Response get(@PathParam("shopperId") Long shopperId,
                         @QueryParam("format") Format format,
-                        @QueryParam("load") Integer load) throws Exception {
+                        @QueryParam("load") Integer load,
+                        @QueryParam("search-name") String search_name)
+                         throws Exception {
 
         if (shopperId == null) {
             LOG.debug("A valid shopper id must be provided");
@@ -72,7 +74,7 @@ public class ShoppingCartResource {
 //        }
 
         Vector<String> new_tags = new Vector<String>();
-        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
+        new_tags = getTags(search_name, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
         int size = new_tags.size();
         for(int i = 0; i < size; i++){
             String new_keywords = new_tags.get(i).toString();
