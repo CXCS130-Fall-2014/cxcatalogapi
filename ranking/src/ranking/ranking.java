@@ -18,6 +18,8 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.List;
 
+import ranking.SQLAccess
+
 /**
  * Created by mac on 14-11-23.
  */
@@ -25,7 +27,8 @@ import java.util.List;
 public class ranking {
     public static final int MAX_LIFETIME = 2;
     public static final int FREQUENT_SH = 3;
-    public static final int WAIT_TIME = 20000;
+    public static final int WAIT_TIME = 1800000;
+    public SQLAccess db = new SQLAccess();
     public void run() {
         try {
             int ctry = 10;
@@ -184,6 +187,10 @@ public class ranking {
                 populartags.put(key, scores.get(key));
             }
         }
+
+        System.out.println("START TO INSERT POPULAR TAGS INTO THE DB");
+        db.insertPopularTags(populartags);
+
         if (lifetime < 0 ) {
 
             lifetime = maxlifetime;
