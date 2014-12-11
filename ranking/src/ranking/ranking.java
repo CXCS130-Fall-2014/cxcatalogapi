@@ -31,6 +31,7 @@ public class ranking {
     public static final int WAIT_TIME = 10000;
     public SQLAccess db = new SQLAccess();
 
+
     public void run(String cat) {
         try {
             int ctry = 10;
@@ -192,7 +193,7 @@ public class ranking {
         }
 
         System.out.println("START TO INSERT POPULAR TAGS INTO THE DB");
-        db.insertPopularTags(populartags);
+        db.insertPopularTags(populartags, catname);
 
         if (lifetime < 0 ) {
 

@@ -24,7 +24,8 @@ public class SQLAccess {
         // nothing lol
     }
 
-    //Insert a single ranking into the database
+    //Insert a single ranking into the database NOTE: DOES NOT ACCOUNT FOR OVERWRITING PRIMARY KEYS AND CATEGORY...
+    //DEPRECATED FOR NOW...
     public void insertSinglePopularTag(String inKey, Integer inVal) {
         if (inKey == null && inVal == null) {
             return;
@@ -56,11 +57,27 @@ public class SQLAccess {
     }
 
     //Insert a new ranking into the database
-    public void insertPopularTags(Map<String, Integer> popularTags) {
+    public void insertPopularTags(Map<String, Integer> popularTags, String category) {
 
         //Make sure popularTags is initialized
         if (popularTags == null) {
             return;
+        }
+
+        if (category == null || category.length() < 1) {
+            return;
+        }
+
+        String cat_table;
+
+        if (category == "clothes") {
+            cat_table = "popular_clothes";
+        }
+        else if (category == "cars") {
+            cat_table = "popular_cars";
+        }
+        else if (category == "electronics") {
+            cat_table = "popular_electronics";
         }
 
         try {
@@ -77,7 +94,7 @@ public class SQLAccess {
 
                 System.out.println("!!!!!key: " + setKey + " value: " + setVal);
 
-                String queryString = "INSERT INTO popular_tags(`key`, `value`, `add_date`) values (?, ?, ?) ON " +
+                String queryString = "INSERT INTO " + cat_table + "(`key`, `value`, `add_date`) values (?, ?, ?) ON " +
                         "DUPLICATE KEY UPDATE `value`=VALUES(`value`), `add_date`=VALUES(`add_date`)";
                 PreparedStatement preparedSmt = connection.prepareStatement(queryString);
 
