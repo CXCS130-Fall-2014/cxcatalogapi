@@ -9,6 +9,10 @@
 <body>
 <div class="content">
     <h1>Shopping Cart Service</h1>
+    <form>
+        <input type="text" name="search-name">
+        <input type="submit" name="search">
+    </form>
     <div id="filters" class="button-group">
         <button class="button is-checked" data-filter="*">show all</button>
         <button class="button" data-filter=".price1">0-50</button>
@@ -34,26 +38,15 @@
 <script src="/assets/jquery.isotope.min.js"></script>
 <script src="http://isotope.metafizzy.co/beta/bower_components/classie/classie.js"></script>
 <script>
-  $(function(){
-
-    var load = 0;
-    var reachEnd = 0;
-    $('.loader').hide();
-    $(window).scroll(function(){
-            if($(window).scrollTop() == $(document).height() - $(window).height()) 
-            {
-                if (reachEnd == 1) {
-                    //$('.loader img').hide();
-                    //$('.loader p').text("No more items to load");
-                    $('.loader').show().delay(1000).fadeOut();
-                }
-                else {
-                    $('.loader').show();
+var load = 0;
+function addNewItems(search_name) {
+                        $('.loader').show();
                     //var appendUrl = "/services/shoppingcart/v1/shoppingcart/append";
                     var appendUrl = "/services/shoppingcart/v1/shoppingcart/apicall/shopperId/1";
                     var appendData = {};
                     appendData['load'] = load;
                     appendData['format'] = 'json';
+                    appendData['search-name'] = search_name;
 
                     $.ajax({
                         type: "GET",
@@ -134,6 +127,22 @@
                         }
                     });
                     load++;
+}
+  $(function(){
+
+    
+    var reachEnd = 0;
+    $('.loader').hide();
+    $(window).scroll(function(){
+            if($(window).scrollTop() == $(document).height() - $(window).height()) 
+            {
+                if (reachEnd == 1) {
+                    //$('.loader img').hide();
+                    //$('.loader p').text("No more items to load");
+                    $('.loader').show().delay(1000).fadeOut();
+                }
+                else {
+                    addNewItems("cloth");
                 }
             }
     });
