@@ -76,55 +76,52 @@ public class ShoppingCartResource {
             LOG.debug("A valid shopper id must be provided");
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
-        /* TESTING
-        Map<String, Integer> hello = new HashMap<String, Integer>();
-        hello.put("mario", 10);
-        hello.put("test2", 14);
 
-        SQLAccess fart = new SQLAccess();
-        System.out.println("TEST" + fart.getPopularTags("test1"));
-        fart.insertPopularTags(hello);
-        */
-        //System.out.println("OKAY TEST....");
-        //ranking ranking_obj = new ranking();
-        //ranking_obj.run();
+        search_name = search_name.toLowerCase();
 
-//        ShoppingCartResponse response = new ShoppingCartResponse();
-//        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
-//        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
-//                dao.getShoppingCartEntries(query);
-//        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
-//            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
-//        }
+        if (all_items.size() == 0){
+            /* TESTING
+            Map<String, Integer> hello = new HashMap<String, Integer>();
+            hello.put("mario", 10);
+            hello.put("test2", 14);
 
-        Vector<String> new_tags = new Vector<String>();
-        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
-        int size = new_tags.size();
-        for(int i = 0; i < size; i++){
-            String new_keywords = new_tags.get(i).toString();
-            new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
-        }
-        //for debug
-//                String test = "我是猫";
-//                String test2 = "初めまして";
-//                String test3 = "sucks";
-//                if(!isAlpha(test)){System.out.println("not alpha");}
-//                if(!isAlpha(test2)){System.out.println("not, alpha");}
-//                if(!isAlpha(test3)){System.out.println("not,alpha");}
-//                else{
-//                    System.out.println("alpha");
+            SQLAccess fart = new SQLAccess();
+            System.out.println("TEST" + fart.getPopularTags("test1"));
+            fart.insertPopularTags(hello);
+            */
+            //System.out.println("OKAY TEST....");
+            //ranking ranking_obj = new ranking();
+            //ranking_obj.run();
+            Vector<String> new_tags = new Vector<String>();
+            int query = 1;
+            // UNCOMMENT WHEN DB IS READYYY THANKS JUSTIN!
+//            if (search_name == 'clothes' || search_name == 'cars' || search_name == 'electronics') {
+//                Vector<String> new_tags = getCategoryPopularTags(search_name);
+//                if (new_tags.size() > 0) {
+//                    query = 0;
 //                }
-
-        // System.out.println(new_tags);
-        String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
-        String url_end = "&results=1&resultsOffers=1&format=json";
-        Vector<String> keyword_urls = new Vector<String>();
-        for(int j = 0; j < new_tags.size(); j++) {
-            String tag = new_tags.elementAt(j);
-            if (tag != null && !tag.isEmpty()) {
-                String encoded = tag.replaceAll(" ", "%20");
-                if (!isAlpha(encoded)) {
-                    continue;
+//            }
+            if (query == 1) {
+                new_tags = getTags(search_name, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
+                int size = new_tags.size();
+                for (int i = 0; i < size; i++) {
+                    String new_keywords = new_tags.get(i).toString();
+                    new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
+                }
+            }
+            // System.out.println(new_tags);
+            String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
+            String url_end = "&results=1&resultsOffers=1&format=json";
+            Vector<String> keyword_urls = new Vector<String>();
+            for (int j = 0; j < new_tags.size(); j++) {
+                String tag = new_tags.elementAt(j);
+                if (tag != null && !tag.isEmpty()) {
+                    String encoded = tag.replaceAll(" ", "%20");
+                    if (!isAlpha(encoded)) {
+                        continue;
+                    }
+                    String url_formatted = url + encoded + url_end;
+                    keyword_urls.add(url_formatted);
                 }
                 String url_formatted = url + encoded + url_end;
                 keyword_urls.add(url_formatted);
