@@ -49,10 +49,15 @@
     $('#categories').on('click', 'button', function() {
         reachEnd = 0;
         load = 0;
-        //$('.item').remove();
         category = $(this).attr('value');
         $('.loader p').text("loading...");
         $('.loader img').show();
+
+        //.isotope('layout');
+
+        // Attempting to remove elements and then fix the layout.
+        $('#container').isotope('remove', $('#container').isotope('getItemElements'));
+        $('#container').isotope({ layoutMode: 'masonry' });
     });
 
     $(window).scroll(function(){
