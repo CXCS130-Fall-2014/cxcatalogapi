@@ -49,7 +49,7 @@ public class ranking {
                 ctry -= 1;
                 cleanup();
                 System.out.println(populartags);
-                Thread.sleep(2000);
+                Thread.sleep(WAIT_TIME);
                 lifetime --;
             }
 
