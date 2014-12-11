@@ -44,7 +44,7 @@ public class FuzzyMatch{
 		    	row = (XSSFRow) rows.next();
 		    	cell = row.getCell(0);
 		        if(cell != null) {
-		               brandnames.add(cell.toString().substring(1));
+		               brandnames.add(cell.toString());
 		        }
 
 		    }

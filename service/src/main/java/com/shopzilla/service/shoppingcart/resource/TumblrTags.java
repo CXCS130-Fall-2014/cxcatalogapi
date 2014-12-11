@@ -24,16 +24,16 @@ public class TumblrTags{
 			JSONArray t_tags = cur_response.getJSONArray("tags");
 			for(int j=0; j<t_tags.length(); j++){
 				String tag = t_tags.get(j).toString();
-				if(!old_tags.contains(tag)){
+				if(isAlpha(tag)&&!old_tags.contains(tag)){
 					//System.out.println(tag);
 					//System.out.println("============");
 					for(int k=0; k<brandnames.size();k++){
 						//if score is over 0.85, than cosider this tag is a valid tag break
 						double score = fm.LevenshteinDistance(tag, brandnames.get(k));
 						if(score >= 0.85 && score <= 1.0){
-							System.out.println(score);
-							System.out.println(brandnames.get(k));
-							System.out.println(tag+"<=========================================================");
+							//System.out.println(score);
+							//System.out.println(brandnames.get(k));
+							//System.out.println(tag+"<=========================================================");
 							old_tags.add(tag);
 							break;
 						}
@@ -62,4 +62,16 @@ public class TumblrTags{
 		return tags;
 
 	}
+
+
+	public boolean isAlpha(String tag) {
+        char[] chars = tag.toCharArray();
+        for (char c : chars) {
+            if(!Character.isLetter(c) && c!='%' && !Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+	
 }

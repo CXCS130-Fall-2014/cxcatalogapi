@@ -11,7 +11,7 @@ public class Item {
     private String title = "";
     private String description = "";
     private Vector<Integer> price_range = new Vector<Integer>();
-    private int price = 0;
+    private double price = 0;
 
     //setters
     public void setOffers(Vector<Offer> offers) {
@@ -32,7 +32,7 @@ public class Item {
     public void setPrice_range(Vector<Integer> price_range) {
         this.price_range = price_range;
     }
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -55,7 +55,7 @@ public class Item {
     public Vector getPrice_range() {
         return this.price_range;
     }
-    public int getPrice() {
+    public double getPrice() {
         return this.price;
     }
 }
