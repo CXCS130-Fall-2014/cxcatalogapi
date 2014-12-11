@@ -10,9 +10,14 @@
 <div class="content">
     <h1>Shopping Cart Service</h1>
     <form id="search-bar">
-        <input type="text" id="search-name" name="search-name">
-        <input type="submit" name="search">
+        <span><input type="text" class="search rounded" name="search-name" placeholder="Search..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Search...'"></span>
+        <span><input id="submit" type="submit" name="search"></span>
     </form>
+    <div id="categories" class="button-group">
+        <button class="button is-checked" value="cloth">Clothes</button>
+        <button class="button" value="car">Cars</button>
+        <button class="button" value="electronic">Electronics</button>
+    </div>
     <div id="filters" class="button-group">
         <button class="button is-checked" data-filter="*">show all</button>
         <button class="button" data-filter=".price1">0-50</button>
@@ -175,18 +180,23 @@ function getUrlParameter(sParam)
         $('.loader').hide();
 
         if (getUrlParameter('search') != "Submit") {
-            console.log("point f");
             addNewItems("cloth");
         }
-
         $( "#search-bar" ).submit(function( event ) {
-            console.log("point g");
 
             $("#container").isotope( 'remove', $(".item") );
             load = 0;
             reachEnd = 0;
-            addNewItems($('#search-name').val());
-            //$('#container').isotope('layout');
+            console.log("key:"+$('.search').val());
+            addNewItems($('.search').val());
+            event.preventDefault();
+        });
+        $('#categories').on('click', 'button', function() {
+            $("#container").isotope( 'remove', $(".item") );
+            load = 0;
+            reachEnd = 0;
+            category = $(this).attr('value');
+            addNewItems(category);
             event.preventDefault();
         });
         
@@ -200,12 +210,12 @@ function getUrlParameter(sParam)
                             $('.loader').show().delay(1000).fadeOut();
                         }
                         else {
-                            if ($('#search-name').val() == "") {
+                            if ($('.search').val() == "") {
                                 console.log("point a");
                                 addNewItems("cloth");
                             } else {
                                 console.log("point b");
-                                addNewItems($('#search-name').val());
+                                addNewItems($('.search').val());
                             }
                         }
                         scroll = 0;
@@ -214,28 +224,11 @@ function getUrlParameter(sParam)
         });
     });
     
-
-    
-    
- /*   var $container = $('#container').imagesLoaded( function() {
-
-        $container.isotope({
-            itemSelector : '.item'
-        });
-        // filter items on button click
-        $('#filters').on( 'click', 'button', function() {
-            var filterValue = $(this).attr('data-filter');
-            $container.isotope({ filter: filterValue });
-        });
-
-        // change is-checked class on buttons
-        var buttonGroups = document.querySelectorAll('.button-group');
-        for ( var i=0, len = buttonGroups.length; i < len; i++ ) {
-            var buttonGroup = buttonGroups[i];
-            radioButtonGroup( buttonGroup );
-        }
-    });*/
-});
+    $('#search-bar').hover(function() {
+        $( this ).css("opacity",0.9);}, function() {
+       $( this ).css("opacity",0);
+      });
+    });
 
 function radioButtonGroup( buttonGroup ) {
   eventie.bind( buttonGroup, 'click', function( event ) {
