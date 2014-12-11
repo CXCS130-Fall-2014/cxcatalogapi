@@ -30,15 +30,10 @@ import java.util.Vector;
 import java.lang.Object;
 import java.text.NumberFormat;
 import java.util.Locale;
-<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.HashSet;
 
 
-
-=======
-import com.shopzilla.service.shoppingcart.SQLAccess;
->>>>>>> 5481d227c0d36fec6e708cd84393823d01736f48
 
 import com.shopzilla.service.shoppingcart.SQLAccess;
 //import com.shopzilla.service.shoppingcart.resource.ranking;
@@ -330,6 +325,20 @@ public class ShoppingCartResource {
         TumblrTags ttags = new TumblrTags();
         old_tags  = ttags.tumblrcalls(keyword, api_key, old_tags, count);
         return old_tags;
+    }
+    
+    public boolean isAlpha(String tag) {
+        char[] chars = tag.toCharArray();
+        boolean isASCII =true;
+        for (char c : chars) {
+            if(c>0x7F) {
+                isASCII = FALSE;
+                break;
+            }
+        }
+        // System.out.println(tag);
+        
+        return isASCII;
     }
 
 
