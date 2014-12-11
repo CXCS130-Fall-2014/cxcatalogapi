@@ -18,6 +18,8 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.List;
 
+import ranking.SQLAccess
+
 /**
  * Created by mac on 14-11-23.
  */
@@ -25,13 +27,18 @@ import java.util.List;
 public class ranking {
     public static final int MAX_LIFETIME = 2;
     public static final int FREQUENT_SH = 3;
-    public static final int WAIT_TIME = 20000;
+
+    public static final int WAIT_TIME = 120000;
+    public SQLAccess db = new SQLAccess();
+
     public void run(String cat) {
         try {
             int ctry = 10;
             // scheduling
             System.out.println("reading");
+            System.out.println(cat);
             catname = cat;
+
             String filename = String.format("src/brandnames/%s.xlsx", catname);
             brandnames = readingExcel(filename, "new");
             for (int i = 0; i < brandnames.size(); i++) {
@@ -55,6 +62,7 @@ public class ranking {
 
     public Vector<String> readingExcel(String filename, String sheetname) throws IOException
     {
+        System.out.println(filename);
         InputStream ExcelFileToRead = new FileInputStream(filename);
         XSSFWorkbook  wb = new XSSFWorkbook(ExcelFileToRead);
 
@@ -167,7 +175,7 @@ public class ranking {
 
     public Vector<String> getNewTags() throws Exception {
         Vector<String> new_tags = new Vector<String>();
-        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
+        new_tags = getTags(catname, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
         int size = new_tags.size();
         for(int i = 0; i < size; i++){
             String new_keywords = new_tags.get(i).toString();
@@ -187,6 +195,10 @@ public class ranking {
                 populartags.put(key, scores.get(key));
             }
         }
+
+        System.out.println("START TO INSERT POPULAR TAGS INTO THE DB");
+        db.insertPopularTags(populartags, catname);
+
         if (lifetime < 0 ) {
 
             lifetime = maxlifetime;
@@ -236,9 +248,9 @@ public class ranking {
 //                    System.out.println("???????????????????");
 //                    System.out.println("!!!!");
 //                    System.out.println(i);
-                    System.out.println(new_tag);
-                    System.out.println("!!!!");
-                    System.out.println(count);
+//                    System.out.println(new_tag);
+//                    System.out.println("!!!!");
+//                    System.out.println(count);
 //                    System.out.println("???????????????????");
                 }
             }

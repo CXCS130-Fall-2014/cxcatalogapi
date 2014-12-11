@@ -5,7 +5,7 @@ package ranking;
  */
 public class main {
     public static void main(String[] args) {
-        String cat = "cloth";
+        String cat = "cars";
         if (args.length == 1 ) {
             cat = args[0];
         }
