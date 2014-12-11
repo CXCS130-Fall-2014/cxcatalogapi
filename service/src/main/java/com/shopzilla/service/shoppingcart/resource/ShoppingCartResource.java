@@ -30,6 +30,7 @@ import java.util.Vector;
 import java.lang.Object;
 import java.text.NumberFormat;
 import java.util.Locale;
+import com.shopzilla.service.shoppingcart.SQLAccess;
 
 import com.shopzilla.service.shoppingcart.SQLAccess;
 //import com.shopzilla.service.shoppingcart.resource.ranking;
@@ -87,13 +88,14 @@ public class ShoppingCartResource {
             //ranking_obj.run();
             Vector<String> new_tags = new Vector<String>();
             int query = 1;
-            // UNCOMMENT WHEN DB IS READYYY THANKS JUSTIN!
-//            if (search_name == 'clothes' || search_name == 'cars' || search_name == 'electronics') {
-//                Vector<String> new_tags = getCategoryPopularTags(search_name);
-//                if (new_tags.size() > 0) {
-//                    query = 0;
-//                }
-//            }
+            //UNCOMMENT WHEN DB IS READYYY THANKS JUSTIN!
+            if (search_name == 'clothes' || search_name == 'cars' || search_name == 'electronics') {
+                SQLAccess db = new SQLAccess();
+                Vector<String> new_tags = db.getCategoryPopularTags(search_name);
+                if (new_tags.size() > 0) {
+                    query = 0;
+                }
+            }
             if (query == 1) {
                 new_tags = getTags(search_name, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
                 int size = new_tags.size();
