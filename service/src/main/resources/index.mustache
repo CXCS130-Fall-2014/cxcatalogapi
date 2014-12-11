@@ -10,9 +10,14 @@
 <div class="content">
     <h1>Shopping Cart Service</h1>
     <form id="search-bar">
-        <input type="text" id="search-name" name="search-name">
-        <input type="submit" name="search">
+        <span><input type="text" class="search rounded" name="search-name" placeholder="Search..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Search...'"></span>
+        <span><input id="submit" type="submit" name="search"></span>
     </form>
+    <div id="categories" class="button-group">
+        <button class="button is-checked" value="cloth">Clothes</button>
+        <button class="button" value="car">Cars</button>
+        <button class="button" value="electronic">Electronics</button>
+    </div>
     <div id="filters" class="button-group">
         <button class="button is-checked" data-filter="*">show all</button>
         <button class="button" data-filter=".price1">0-50</button>
@@ -128,6 +133,7 @@ function addNewItems(search_name) {
                                 newItems = $(newDivs).appendTo('#container');
                                 $('#container').imagesLoaded( function(){
                                     $("#container").isotope('appended', newItems );
+                                    $('#container').isotope('layout');
                                 });
                             }
                         },
@@ -170,69 +176,59 @@ function getUrlParameter(sParam)
             var buttonGroup = buttonGroups[i];
             radioButtonGroup( buttonGroup );
         }
-    });
-    
-    $('.loader').hide();
 
-    if (getUrlParameter('search') != "Submit") {
-        console.log("point f");
-        addNewItems("cloth");
-    }
+        $('.loader').hide();
 
-    $( "#search-bar" ).submit(function( event ) {
-        console.log("point g");
-
-        $("#container").isotope( 'remove', $(".item") );
-        load = 0;
-        reachEnd = 0;
-        addNewItems($('#search-name').val());
-        $('#container').isotope('layout');
-        event.preventDefault();
-    });
-    
-    var scroll = 0;
-    $(window).scroll(function(){
-            if (scroll == 0) {
-                if($(window).scrollTop() == $(document).height() - $(window).height()) {
-                    scroll = 1;
-                    if (reachEnd == 1) {
-                        console.log("point c");
-                        $('.loader').show().delay(1000).fadeOut();
-                    }
-                    else {
-                        if ($('#search-name').val() == "") {
-                            console.log("point a");
-                            addNewItems("cloth");
-                        } else {
-                            console.log("point b");
-                            addNewItems($('#search-name').val());
-                        }
-                    }
-                    scroll = 0;
-                }
-            }
-    });
-    
-    
- /*   var $container = $('#container').imagesLoaded( function() {
-
-        $container.isotope({
-            itemSelector : '.item'
-        });
-        // filter items on button click
-        $('#filters').on( 'click', 'button', function() {
-            var filterValue = $(this).attr('data-filter');
-            $container.isotope({ filter: filterValue });
-        });
-
-        // change is-checked class on buttons
-        var buttonGroups = document.querySelectorAll('.button-group');
-        for ( var i=0, len = buttonGroups.length; i < len; i++ ) {
-            var buttonGroup = buttonGroups[i];
-            radioButtonGroup( buttonGroup );
+        if (getUrlParameter('search') != "Submit") {
+            addNewItems("cloth");
         }
-    });*/
-});
+        $( "#search-bar" ).submit(function( event ) {
+
+            $("#container").isotope( 'remove', $(".item") );
+            load = 0;
+            reachEnd = 0;
+            console.log("key:"+$('.search').val());
+            addNewItems($('.search').val());
+            event.preventDefault();
+        });
+        $('#categories').on('click', 'button', function() {
+            $("#container").isotope( 'remove', $(".item") );
+            load = 0;
+            reachEnd = 0;
+            category = $(this).attr('value');
+            addNewItems(category);
+            event.preventDefault();
+        });
+        
+        var scroll = 0;
+        $(window).scroll(function(){
+                if (scroll == 0) {
+                    if($(window).scrollTop() == $(document).height() - $(window).height()) {
+                        scroll = 1;
+                        if (reachEnd == 1) {
+                            console.log("point c");
+                            $('.loader').show().delay(1000).fadeOut();
+                        }
+                        else {
+                            if ($('.search').val() == "") {
+                                console.log("point a");
+                                addNewItems("cloth");
+                            } else {
+                                console.log("point b");
+                                addNewItems($('.search').val());
+                            }
+                        }
+                        scroll = 0;
+                    }
+                }
+        });
+    });
+    
+    $('#search-bar').hover(function() {
+        $( this ).css("opacity",0.9);}, function() {
+       $( this ).css("opacity",0);
+      });
+    });
 
 function radioButtonGroup( buttonGroup ) {
   eventie.bind( buttonGroup, 'click', function( event ) {
