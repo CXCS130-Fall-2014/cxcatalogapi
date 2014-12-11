@@ -39,17 +39,22 @@
 <script src="http://isotope.metafizzy.co/beta/bower_components/classie/classie.js"></script>
 <script>
 var load = 0;
+var reachEnd = 0;
 function addNewItems(search_name) {
     console.log("add new item");
     console.log(load);
-                        $('.loader').show();
+    console.log(search_name);
+    if (reachEnd == 0) {
+        $('.loader img').show();
+        $('.loader p').text("loading...");
+    }
+        $('.loader').show();
                     //var appendUrl = "/services/shoppingcart/v1/shoppingcart/append";
                     var appendUrl = "/services/shoppingcart/v1/shoppingcart/apicall/shopperId/1";
                     var appendData = {};
                     appendData['load'] = load;
                     appendData['format'] = 'json';
                     appendData['search-name'] = search_name;
-                    console.log(search_name);
 
                     $.ajax({
                         type: "GET",
@@ -84,11 +89,13 @@ function addNewItems(search_name) {
                             console.log(price);
                             //console.log(descriptions);
                             if (jQuery.isEmptyObject(imgs)) {
+                                console.log("point d");
                                 reachEnd = 1;
                                 $('.loader img').hide();
                                 $('.loader p').text("No more items to load");
                                 $('.loader').show().delay(1000).fadeOut();
                             } else {
+                                console.log("point e");
                                 $('.loader').hide();
                                 for (var i = 0; i < imgs.length; i++) {
                                     price_class = "";
@@ -146,45 +153,6 @@ function getUrlParameter(sParam)
 }         
   $(function(){
 
-    
-    var reachEnd = 0;
-    $('.loader').hide();
-    console.log(getUrlParameter('search'));
-    if (getUrlParameter('search') != "Submit") {
-        addNewItems("cloth");
-        load++;
-    }
-        $( "#search-bar" ).submit(function( event ) {
-            console.log("submit clicked");
-
-            $("#container").empty();
-            load = 0;
-            addNewItems($('#search-name').val());
-            console.log($('#search-name').val());
-            event.preventDefault();
-            load++;
-        });
-    
-
-    $(window).scroll(function(){
-            if($(window).scrollTop() == $(document).height() - $(window).height()) 
-            {
-                if (reachEnd == 1) {
-                    $('.loader').show().delay(1000).fadeOut();
-                }
-                else {
-                    if ($('#search-name').val() == "") {
-                        console.log("yes cloth");
-                        addNewItems("cloth");
-                    } else {
-                        console.log("no other");
-                        addNewItems($('#search-name').val());
-                    }
-                }
-            }
-    });
-    
-    
     var $container = $('#container').imagesLoaded( function() {
 
         $container.isotope({
@@ -203,6 +171,67 @@ function getUrlParameter(sParam)
             radioButtonGroup( buttonGroup );
         }
     });
+    
+    $('.loader').hide();
+
+    if (getUrlParameter('search') != "Submit") {
+        console.log("point f");
+        addNewItems("cloth");
+    }
+
+    $( "#search-bar" ).submit(function( event ) {
+        console.log("point g");
+
+        $("#container").isotope( 'remove', $(".item") );
+        load = 0;
+        reachEnd = 0;
+        addNewItems($('#search-name').val());
+        $('#container').isotope('layout');
+        event.preventDefault();
+    });
+    
+    var scroll = 0;
+    $(window).scroll(function(){
+            if (scroll == 0) {
+                if($(window).scrollTop() == $(document).height() - $(window).height()) {
+                    scroll = 1;
+                    if (reachEnd == 1) {
+                        console.log("point c");
+                        $('.loader').show().delay(1000).fadeOut();
+                    }
+                    else {
+                        if ($('#search-name').val() == "") {
+                            console.log("point a");
+                            addNewItems("cloth");
+                        } else {
+                            console.log("point b");
+                            addNewItems($('#search-name').val());
+                        }
+                    }
+                    scroll = 0;
+                }
+            }
+    });
+    
+    
+ /*   var $container = $('#container').imagesLoaded( function() {
+
+        $container.isotope({
+            itemSelector : '.item'
+        });
+        // filter items on button click
+        $('#filters').on( 'click', 'button', function() {
+            var filterValue = $(this).attr('data-filter');
+            $container.isotope({ filter: filterValue });
+        });
+
+        // change is-checked class on buttons
+        var buttonGroups = document.querySelectorAll('.button-group');
+        for ( var i=0, len = buttonGroups.length; i < len; i++ ) {
+            var buttonGroup = buttonGroups[i];
+            radioButtonGroup( buttonGroup );
+        }
+    });*/
 });
 
 function radioButtonGroup( buttonGroup ) {
