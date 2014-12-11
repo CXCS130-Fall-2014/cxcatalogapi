@@ -9,8 +9,8 @@
 <body>
 <div class="content">
     <h1>Shopping Cart Service</h1>
-    <form>
-        <input type="text" name="search-name">
+    <form id="search-bar">
+        <input type="text" id="search-name" name="search-name">
         <input type="submit" name="search">
     </form>
     <div id="filters" class="button-group">
@@ -40,6 +40,8 @@
 <script>
 var load = 0;
 function addNewItems(search_name) {
+    console.log("add new item");
+    console.log(load);
                         $('.loader').show();
                     //var appendUrl = "/services/shoppingcart/v1/shoppingcart/append";
                     var appendUrl = "/services/shoppingcart/v1/shoppingcart/apicall/shopperId/1";
@@ -47,6 +49,7 @@ function addNewItems(search_name) {
                     appendData['load'] = load;
                     appendData['format'] = 'json';
                     appendData['search-name'] = search_name;
+                    console.log(search_name);
 
                     $.ajax({
                         type: "GET",
@@ -128,21 +131,55 @@ function addNewItems(search_name) {
                     });
                     load++;
 }
+function getUrlParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) 
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) 
+        {
+            return sParameterName[1];
+        }
+    }
+}         
   $(function(){
 
     
     var reachEnd = 0;
     $('.loader').hide();
+    console.log(getUrlParameter('search'));
+    if (getUrlParameter('search') != "Submit") {
+        addNewItems("cloth");
+        load++;
+    }
+        $( "#search-bar" ).submit(function( event ) {
+            console.log("submit clicked");
+
+            $("#container").empty();
+            load = 0;
+            addNewItems($('#search-name').val());
+            console.log($('#search-name').val());
+            event.preventDefault();
+            load++;
+        });
+    
+
     $(window).scroll(function(){
             if($(window).scrollTop() == $(document).height() - $(window).height()) 
             {
                 if (reachEnd == 1) {
-                    //$('.loader img').hide();
-                    //$('.loader p').text("No more items to load");
                     $('.loader').show().delay(1000).fadeOut();
                 }
                 else {
-                    addNewItems("cloth");
+                    if ($('#search-name').val() == "") {
+                        console.log("yes cloth");
+                        addNewItems("cloth");
+                    } else {
+                        console.log("no other");
+                        addNewItems($('#search-name').val());
+                    }
                 }
             }
     });
