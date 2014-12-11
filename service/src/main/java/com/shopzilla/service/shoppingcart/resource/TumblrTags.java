@@ -31,9 +31,9 @@ public class TumblrTags{
 						//if score is over 0.85, than cosider this tag is a valid tag break
 						double score = fm.LevenshteinDistance(tag, brandnames.get(k));
 						if(score >= 0.85 && score <= 1.0){
-							System.out.println(score);
-							System.out.println(brandnames.get(k));
-							System.out.println(tag+"<=========================================================");
+							//System.out.println(score);
+							//System.out.println(brandnames.get(k));
+							//System.out.println(tag+"<=========================================================");
 							old_tags.add(tag);
 							break;
 						}

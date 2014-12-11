@@ -26,7 +26,8 @@ import java.net.*;
 import java.io.*;
 import java.util.Vector;
 import java.lang.Object;
-
+import java.text.NumberFormat;
+import java.util.Locale;
 
 
 /**
@@ -113,7 +114,7 @@ public class ShoppingCartResource {
 //            }
             all_items.addAll(items);
         }
-        System.out.println("done");
+        //System.out.println("done");
         //return buildVectorResponse(all_items, format);
         Vector<Item> new_items = new Vector<Item>();
         if ((load+1)*10 < all_items.size()) {
@@ -257,14 +258,18 @@ public class ShoppingCartResource {
             String price_dollar = cur_product.has("price") ? cur_product.getJSONObject("price").get("value").toString() : "";
             double price = 0;
             if (price_dollar != "") {
-                price = Double.parseDouble(price_dollar.substring(1));
+                //NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+                //Number number = format.parse(price_dollar.substring(1));
+                //price = number.doubleValue();
+                price = Double.parseDouble(price_dollar.substring(1).replaceAll(",",""));
+                System.out.println(price);
             }
-            System.out.println(price);
-
 
             new_item.setImage_url(image_url);
+            new_item.setTitle(title);
             new_item.setDescription(description);
             new_item.setRedirect_url(url);
+            new_item.setPrice(price);
             // todo add offers
             // todo add price range and price
             items.add(new_item);
