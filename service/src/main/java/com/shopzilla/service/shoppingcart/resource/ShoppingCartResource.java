@@ -48,6 +48,7 @@ public class ShoppingCartResource {
 
     private ShoppingCartDao dao;
     private Mapper mapper;
+    private Vector<Item> all_items = new Vector<Item>();
 
     public ShoppingCartResource(ShoppingCartDao dao, Mapper mapper) {
         this.dao = dao;
@@ -61,75 +62,79 @@ public class ShoppingCartResource {
     @Path("apicall/shopperId/{shopperId}")
     public Response get(@PathParam("shopperId") Long shopperId,
                         @QueryParam("format") Format format,
-                        @QueryParam("load") Integer load) throws Exception {
+                        @QueryParam("load") Integer load,
+                        @QueryParam("search-name") String search_name)
+                         throws Exception {
 
         if (shopperId == null) {
             LOG.debug("A valid shopper id must be provided");
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
-        /* TESTING
-        Map<String, Integer> hello = new HashMap<String, Integer>();
-        hello.put("mario", 10);
-        hello.put("test2", 14);
+        if (all_items.size() == 0){
+            /* TESTING
+            Map<String, Integer> hello = new HashMap<String, Integer>();
+            hello.put("mario", 10);
+            hello.put("test2", 14);
 
-        SQLAccess fart = new SQLAccess();
-        System.out.println("TEST" + fart.getPopularTags("test1"));
-        fart.insertPopularTags(hello);
-        */
-        //System.out.println("OKAY TEST....");
-        //ranking ranking_obj = new ranking();
-        //ranking_obj.run();
+            SQLAccess fart = new SQLAccess();
+            System.out.println("TEST" + fart.getPopularTags("test1"));
+            fart.insertPopularTags(hello);
+            */
+            //System.out.println("OKAY TEST....");
+            //ranking ranking_obj = new ranking();
+            //ranking_obj.run();
 
-//        ShoppingCartResponse response = new ShoppingCartResponse();
-//        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
-//        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
-//                dao.getShoppingCartEntries(query);
-//        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
-//            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
-//        }
+    //        ShoppingCartResponse response = new ShoppingCartResponse();
+    //        ShoppingCartQuery query = ShoppingCartQuery.builder().shopperId(shopperId).build();
+    //        List<com.shopzilla.service.shoppingcart.data.ShoppingCartEntry> daoResults =
+    //                dao.getShoppingCartEntries(query);
+    //        for (com.shopzilla.service.shoppingcart.data.ShoppingCartEntry shoppingCart : daoResults) {
+    //            response.getShoppingCartEntry().add(mapper.map(shoppingCart, ShoppingCartEntry.class));
+    //        }
 
-        Vector<String> new_tags = new Vector<String>();
-        new_tags = getTags("clothes", "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
-        int size = new_tags.size();
-        for(int i = 0; i < size; i++){
-            String new_keywords = new_tags.get(i).toString();
-            new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
-        }
-
-        // System.out.println(new_tags);
-        String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
-        String url_end = "&results=1&resultsOffers=1&format=json";
-        Vector<String> keyword_urls = new Vector<String>();
-        for(int j = 0; j < new_tags.size(); j++) {
-            String tag = new_tags.elementAt(j);
-            if (tag != null && !tag.isEmpty()) {
-                String encoded = tag.replaceAll(" ", "%20");
-                if (!isAlpha(encoded)) {
-                    continue;
-                }
-                String url_formatted = url + encoded + url_end;
-                keyword_urls.add(url_formatted);
+            Vector<String> new_tags = new Vector<String>();
+            new_tags = getTags(search_name, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
+            int size = new_tags.size();
+            for (int i = 0; i < size; i++) {
+                String new_keywords = new_tags.get(i).toString();
+                new_tags = getTags(new_keywords, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 10);
             }
-        }
-        Vector<Item> all_items = new Vector<Item>();
-        for(int k = 0; k < keyword_urls.size(); k++) {
-            String catalog_response = "";
-            String api_url = keyword_urls.elementAt(k);
-            URL api_call = new URL(api_url);
-            URLConnection ac = api_call.openConnection();
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            ac.getInputStream()));
-            String inputLine;
 
-            while ((inputLine = in.readLine()) != null)
-                catalog_response += inputLine;
-            in.close();
-            Vector<Item> items = parseItems(catalog_response);
-//            for (int i =0; i < items.size(); i ++) {
-//                all_items.addAll(items.elementAt(i).getImage_url());
-//            }
-            all_items.addAll(items);
+            // System.out.println(new_tags);
+            String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
+            String url_end = "&results=1&resultsOffers=1&format=json";
+            Vector<String> keyword_urls = new Vector<String>();
+            for (int j = 0; j < new_tags.size(); j++) {
+                String tag = new_tags.elementAt(j);
+                if (tag != null && !tag.isEmpty()) {
+                    String encoded = tag.replaceAll(" ", "%20");
+                    if (!isAlpha(encoded)) {
+                        continue;
+                    }
+                    String url_formatted = url + encoded + url_end;
+                    keyword_urls.add(url_formatted);
+                }
+            }
+            // Vector<Item> all_items = new Vector<Item>();
+            for (int k = 0; k < keyword_urls.size(); k++) {
+                String catalog_response = "";
+                String api_url = keyword_urls.elementAt(k);
+                URL api_call = new URL(api_url);
+                URLConnection ac = api_call.openConnection();
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(
+                                ac.getInputStream()));
+                String inputLine;
+
+                while ((inputLine = in.readLine()) != null)
+                    catalog_response += inputLine;
+                in.close();
+                Vector<Item> items = parseItems(catalog_response);
+    //            for (int i =0; i < items.size(); i ++) {
+    //                all_items.addAll(items.elementAt(i).getImage_url());
+    //            }
+                all_items.addAll(items);
+            }
         }
         //System.out.println("done");
         //return buildVectorResponse(all_items, format);
