@@ -42,7 +42,7 @@
 
     var load = 0;
     var reachEnd = 0;
-    var category = "ootd";
+    var category = "clothes";   // This is the default category.
     $('.loader').hide();
 
     // Get value from category button and reset page.
@@ -53,11 +53,8 @@
         $('.loader p').text("loading...");
         $('.loader img').show();
 
-        //.isotope('layout');
-
-        // Attempting to remove elements and then fix the layout.
+        // Remove elements and then fix the layout.
         $('#container').isotope('remove', $('#container').isotope('getItemElements'));
-        //$('#container').isotope({ layoutMode: 'masonry' });
         $('#container').isotope('layout');
     });
 
@@ -136,7 +133,7 @@
                                 newItems = $(newDivs).appendTo('#container');
                                 $('#container').imagesLoaded( function(){
                                     $("#container").isotope('appended', newItems );
-$("#container").isotope('layout');
+                                    $("#container").isotope('layout');
                                 });
                             }
                         },
@@ -156,8 +153,7 @@ $("#container").isotope('layout');
             itemSelector: '.item',
         });*/
         $container.isotope({
-            itemSelector : '.item',
-            layoutMode   : 'masonry'
+            itemSelector : '.item'
         });
         // filter items on button click
         /*$('#filters').on( 'click', 'button', function() {
