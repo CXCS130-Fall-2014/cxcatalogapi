@@ -14,9 +14,9 @@
         <span><input id="submit" type="submit" name="search"></span>
     </form>
     <div id="categories" class="button-group">
-        <button class="button is-checked" value="cloth">Clothes</button>
-        <button class="button" value="car">Cars</button>
-        <button class="button" value="electronic">Electronics</button>
+        <button class="button is-checked" value="clothes">Clothes</button>
+        <button class="button" value="cars">Cars</button>
+        <button class="button" value="electronics">Electronics</button>
     </div>
     <div id="filters" class="button-group">
         <button class="button is-checked" data-filter="*">show all</button>
@@ -180,7 +180,7 @@ function getUrlParameter(sParam)
         $('.loader').hide();
 
         if (getUrlParameter('search') != "Submit") {
-            addNewItems("cloth");
+            addNewItems("clothes");
         }
         $( "#search-bar" ).submit(function( event ) {
 
@@ -212,7 +212,7 @@ function getUrlParameter(sParam)
                         else {
                             if ($('.search').val() == "") {
                                 console.log("point a");
-                                addNewItems("cloth");
+                                addNewItems("clothes");
                             } else {
                                 console.log("point b");
                                 addNewItems($('.search').val());

@@ -150,21 +150,21 @@ public class SQLAccess {
     //Get a vector of all the popular tags based on the category. Category will determine which table to read from
     public Vector<String> getCategoryPopularTags(String category) {
 
-        String tableCat = "";
-        if (category == "clothes") {
+        String tableCat = "popular_clothes";
+        if (category.equals("clothes")) {
             tableCat = "popular_clothes";
         }
-        else if (category == "electronics") {
+        else if (category.equals("electronics")) {
             tableCat = "popular_electronics";
         }
-        else if (category == "cars") {
+        else if (category.equals("cars")) {
             tableCat = "popular_cars";
         }
 
         //Query will get tags by category, limit it to how many we asked for (though no guarantees it will fulfill that many
         //because if you ask for 500 tags, there might only exist 200 tags in the db so it will only return 200.
         //Orders them by descending date so you get the most recently added tags.
-        String query = "SELECT * FROM " + tableCat + " ORDER BY value DESC";
+        String query = "SELECT * FROM " + tableCat + " ORDER BY `value` DESC";
         //System.out.println(query);
         Vector<String> resultsList = new Vector<String>();
 

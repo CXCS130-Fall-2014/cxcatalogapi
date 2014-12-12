@@ -94,16 +94,31 @@ public class ShoppingCartResource {
             //System.out.println("OKAY TEST....");
             //ranking ranking_obj = new ranking();
             //ranking_obj.run();
+
+            /*
+            SQLAccess test_db = new SQLAccess();
+            Vector<String> mongoose = new Vector<String>();
+
+            mongoose = test_db.getCategoryPopularTags("clothes");
+            System.out.println("================" + mongoose.size());
+            */
+
             Vector<String> new_tags = new Vector<String>();
             int query = 1;
+            System.out.println("SEARCH_NAME IS: " + search_name + " OMG");
+
+            if (search_name.equals("clothes"));
             //UNCOMMENT WHEN DB IS READYYY THANKS JUSTIN!
-//            if (search_name == 'clothes' || search_name == 'cars' || search_name == 'electronics'){
-//                SQLAccess db = new SQLAccess();
-//                Vector<String> new_tags = db.getCategoryPopularTags(search_name);
-//                if (new_tags.size() > 0) {
-//                    query = 0;
-//               }
-//            }
+            if (search_name.equals("clothes") || search_name.equals("cars") || search_name.equals("electronics")){
+                SQLAccess db = new SQLAccess();
+                new_tags = db.getCategoryPopularTags(search_name);
+
+                System.out.println("...search_name is: " + search_name + " and new_tags size is: " + new_tags.size());
+
+                if (new_tags.size() > 0) {
+                    query = 0;
+               }
+            }
             if (query == 1) {
                 new_tags = getTags(search_name, "YW6bwCsUWy31u7ZWNkOGoBAeI4sqyKEgWT8Pnkhug2Z3y2MVcf", new_tags, 20);
                 int size = new_tags.size();
@@ -116,9 +131,11 @@ public class ShoppingCartResource {
             String url = "http://catalog.bizrate.com/services/catalog/v1/us/product?apiKey=f94ab04178d1dea0821d5816dfb8af8d&publisherId=608865&keyword=";
             String url_end = "&results=1&resultsOffers=1&format=json";
             Vector<String> keyword_urls = new Vector<String>();
+            System.out.println("NEW_TAGS.SIZE() = " + new_tags.size());
             for (int j = 0; j < new_tags.size(); j++) {
                 String tag = new_tags.elementAt(j);
                 if (tag != null && !tag.isEmpty()) {
+                    System.out.println("TAGS..........."+new_tags.elementAt(j));
                     String encoded = tag.replaceAll(" ", "%20");
                     if (!isAlpha(encoded)) {
                         continue;
@@ -126,6 +143,10 @@ public class ShoppingCartResource {
                     String url_formatted = url + encoded + url_end;
                     keyword_urls.add(url_formatted);
                 }
+                else {
+                    System.out.println("DB WAS EMPTY OR SOMETHING BAD!!!!!");
+                }
+
 //                String url_formatted = url + encoded + url_end;
 //                keyword_urls.add(url_formatted);
 //            }
