@@ -53,7 +53,7 @@ public class ShoppingCartResource {
     private ShoppingCartDao dao;
     private Mapper mapper;
     private HashSet red_url = new HashSet<String>();
-    private Vector<Item> items = new Vector<Item>();
+    private Vector<Item> all_items = new Vector<Item>();
 
 
 
@@ -69,7 +69,9 @@ public class ShoppingCartResource {
     @Path("apicall/shopperId/{shopperId}")
     public Response get(@PathParam("shopperId") Long shopperId,
                         @QueryParam("format") Format format,
-                        @QueryParam("load") Integer load) throws Exception {
+                        @QueryParam("load") Integer load,
+                        @QueryParam("search-name") String search_name)
+                         throws Exception {
 
         if (shopperId == null) {
             LOG.debug("A valid shopper id must be provided");
@@ -123,11 +125,12 @@ public class ShoppingCartResource {
                     String url_formatted = url + encoded + url_end;
                     keyword_urls.add(url_formatted);
                 }
-                String url_formatted = url + encoded + url_end;
-                keyword_urls.add(url_formatted);
-            }
+//                String url_formatted = url + encoded + url_end;
+//                keyword_urls.add(url_formatted);
+//            }
         }
-        Vector<Item> all_items = new Vector<Item>();
+            
+        //Vector<Item> all_items = new Vector<Item>();
         for(int k = 0; k < keyword_urls.size(); k++) {
             String catalog_response = "";
             String api_url = keyword_urls.elementAt(k);
@@ -146,6 +149,7 @@ public class ShoppingCartResource {
 //                all_items.addAll(items.elementAt(i).getImage_url());
 //            }
             all_items.addAll(items);
+        }
         }
         //System.out.println("done");
         //return buildVectorResponse(all_items, format);
