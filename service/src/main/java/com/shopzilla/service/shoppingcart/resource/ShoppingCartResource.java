@@ -79,8 +79,8 @@ public class ShoppingCartResource {
         }
 
         search_name = search_name.toLowerCase();
-
-        if (all_items.size() == 0){
+        if(load == 0){
+        //if (all_items.size() == 0){
             /* TESTING
             Map<String, Integer> hello = new HashMap<String, Integer>();
             hello.put("mario", 10);
@@ -151,6 +151,7 @@ public class ShoppingCartResource {
             all_items.addAll(items);
         }
         }
+
         //System.out.println("done");
         //return buildVectorResponse(all_items, format);
         Vector<Item> new_items = new Vector<Item>();
