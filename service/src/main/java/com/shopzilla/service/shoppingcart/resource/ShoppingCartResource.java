@@ -80,6 +80,7 @@ public class ShoppingCartResource {
 
         search_name = search_name.toLowerCase();
         if(load == 0){
+            all_items.clear();
         //if (all_items.size() == 0){
             /* TESTING
             Map<String, Integer> hello = new HashMap<String, Integer>();
