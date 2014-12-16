@@ -161,10 +161,7 @@ public class SQLAccess {
             tableCat = "popular_cars";
         }
 
-        //Query will get tags by category, limit it to how many we asked for (though no guarantees it will fulfill that many
-        //because if you ask for 500 tags, there might only exist 200 tags in the db so it will only return 200.
-        //Orders them by descending date so you get the most recently added tags.
-        String query = "SELECT * FROM " + tableCat + " ORDER BY `value` DESC";
+        String query = "SELECT * FROM " + tableCat + " ORDER BY `value` DESC LIMIT 50";
         //System.out.println(query);
         Vector<String> resultsList = new Vector<String>();
 
